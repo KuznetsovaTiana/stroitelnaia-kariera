@@ -10,11 +10,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /demo; Выберите тестовую роль",
+    "implemented": true,
     "expectedResult": "Открывается соответствующий кабинет; состояние не сбрасывается",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Роль, перезагрузка, отмена/сброс, повреждение/ошибка записи, 360 px",
-    "testEvidence": "A: tests/browser.mjs",
-    "implemented": true
+    "testEvidence": "A: tests/browser.mjs"
   },
   {
     "id": "D02",
@@ -27,11 +27,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /demo/about; Профессиональный старт в строительстве",
+    "implemented": true,
     "expectedResult": "Понятно, где моковые данные и имитация ИИ",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "D03",
@@ -44,11 +44,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /demo (modal:reset); Выберите тестовую роль",
+    "implemented": true,
     "expectedResult": "Подтверждение очищает только данные приложения; отмена ничего не меняет",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Роль, перезагрузка, отмена/сброс, повреждение/ошибка записи, 360 px",
-    "testEvidence": "A: tests/browser.mjs",
-    "implemented": true
+    "testEvidence": "A: tests/browser.mjs"
   },
   {
     "id": "P01",
@@ -61,11 +61,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /; От учебного проекта — к строительной карьере",
+    "implemented": true,
     "expectedResult": "Рабочие переходы, отраслевое позиционирование и объяснение двух частей профиля",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "P02",
@@ -78,11 +78,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /practices; Поиск практики",
+    "implemented": true,
     "expectedResult": "Выдача меняется; фильтры сохраняются при возврате",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "P03",
@@ -95,11 +95,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /practices/offer_pto_demo; Практика в отделе ПТО",
+    "implemented": true,
     "expectedResult": "Видны сроки, места, наставник, требования; переход к отклику",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "P04",
@@ -112,11 +112,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /jobs; Работа и стажировки",
+    "implemented": true,
     "expectedResult": "Практика, стажировка и вакансия различаются явно",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "P05",
@@ -129,11 +129,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /jobs/offer_13_demo; Организация работ · стартовая вакансия",
+    "implemented": true,
     "expectedResult": "Отклик связан с конкретной версией резюме",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "P06",
@@ -146,11 +146,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /companies; Компании",
+    "implemented": true,
     "expectedResult": "Показаны только допущенные оператором компании",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "P07",
@@ -163,11 +163,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /companies/company_sever_demo; Северный контур — демо",
+    "implemented": true,
     "expectedResult": "Число открытых предложений соответствует каталогу",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "P08",
@@ -180,11 +180,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /universities; Вузы",
+    "implemented": true,
     "expectedResult": "В демо только МГСУ, без обещания подключённых партнёров",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "P09",
@@ -197,11 +197,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /universities/mgsu; МГСУ — учебный пример",
+    "implemented": true,
     "expectedResult": "Пометка об учебном примере и переходы к практикам",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "P10",
@@ -214,11 +214,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /professions; Профессии и навыки",
+    "implemented": true,
     "expectedResult": "Связи профессия → задачи → навыки → предложения",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "P11",
@@ -231,11 +231,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /professions/profession_0; Инженер ПТО",
+    "implemented": true,
     "expectedResult": "ПТО, проектирование, BIM/ТИМ, сметы имеют предметное наполнение",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "P12",
@@ -248,11 +248,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /how-it-works; Как это работает",
+    "implemented": true,
     "expectedResult": "Показан путь практики и различие сведений вуза и самоописания",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "P13",
@@ -265,11 +265,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /for-employers; Работодателям",
+    "implemented": true,
     "expectedResult": "Содержание ориентировано на набор студентов и места практики",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "P14",
@@ -282,11 +282,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /for-universities; Вузам",
+    "implemented": true,
     "expectedResult": "Показаны согласования и требования к практике",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "P15",
@@ -299,11 +299,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /statistics; Открытая статистика",
+    "implemented": true,
     "expectedResult": "Только агрегаты, пометка об учебной выборке и размере набора",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC09: область/фильтр/предложение, нулевой знаменатель, CSV без персональных полей, прирост после SC02, 360 px",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs"
   },
   {
     "id": "P16",
@@ -316,11 +316,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /help; Помощь и о проекте",
+    "implemented": true,
     "expectedResult": "Объяснены ограничения демо, роли, восстановление исходного набора",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "S01",
@@ -333,11 +333,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student; Анна, строим ваш профессиональный маршрут.",
+    "implemented": true,
     "expectedResult": "Реальные локальные статусы, рекомендации и сроки",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Роль, перезагрузка, отмена/сброс, повреждение/ошибка записи, 360 px",
-    "testEvidence": "A: tests/browser.mjs",
-    "implemented": true
+    "testEvidence": "A: tests/browser.mjs"
   },
   {
     "id": "S02",
@@ -350,11 +350,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/profile; Мой профиль",
+    "implemented": true,
     "expectedResult": "Самоописание сохраняется отдельно от сведений вуза",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S03",
@@ -367,11 +367,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/education; Образовательные сведения",
+    "implemented": true,
     "expectedResult": "Вузовские поля недоступны для прямой правки",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S04",
@@ -384,11 +384,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/education/history; История и исправления",
+    "implemented": true,
     "expectedResult": "Запрос появляется у координатора; показаны прежние и новые значения",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S05",
@@ -401,11 +401,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/projects/project_0; Учебный проект · ПТО",
+    "implemented": true,
     "expectedResult": "Роль студента, инструменты и результат не подменяются трудовым опытом",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S06",
@@ -418,11 +418,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/resumes; Мои резюме",
+    "implemented": true,
     "expectedResult": "Несколько вариантов связаны с одним образовательным профилем",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S07",
@@ -435,11 +435,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/resumes/resume_0/edit; Редактор резюме",
+    "implemented": true,
     "expectedResult": "Валидация, черновик и явное подтверждение изменений",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S08",
@@ -452,11 +452,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/resumes/resume_0/assistant; Сценарный помощник резюме",
+    "implemented": true,
     "expectedResult": "Ответы отражаются в результате; статус «имитация ИИ»",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S09",
@@ -469,11 +469,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/resumes/resume_0; Старт в ПТО",
+    "implemented": true,
     "expectedResult": "Факты и самоописание визуально разделены",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S10",
@@ -486,11 +486,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/applications; Отклики и приглашения",
+    "implemented": true,
     "expectedResult": "Принятие открывает связанный отклик, отказ сохраняет историю",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "S11",
@@ -502,12 +502,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /student/applications/application_d372916d-06df-4299-addc-75739512ff25; Отклик",
+    "evidence": "Маршрут Edge: /student/applications/application_69f6fad6-cb44-44c0-911f-3600e0cf0cfa; Отклик",
+    "implemented": true,
     "expectedResult": "История действий, выбранное резюме и доступная переписка",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "S12",
@@ -520,11 +520,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/saved; Избранное и сохранённые поиски",
+    "implemented": true,
     "expectedResult": "Перезагрузка сохраняет выбор, удалённое предложение помечается",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "S13",
@@ -537,11 +537,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/practices; Мои практики",
+    "implemented": true,
     "expectedResult": "Показываются этап организации и учебный результат отдельно",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "S14",
@@ -553,12 +553,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /student/practices/practice_2f475478-d0d7-4bdb-9c21-2f446f532f3e; Дело практики",
+    "evidence": "Маршрут Edge: /student/practices/practice_410f2cdf-5d8d-4416-8bc9-cdb4e2b1fe14; Дело практики",
+    "implemented": true,
     "expectedResult": "Видны участники, требования, задания, сроки и замечания",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "S15",
@@ -570,12 +570,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /student/practices/practice_2f475478-d0d7-4bdb-9c21-2f446f532f3e/documents; Дело практики",
+    "evidence": "Маршрут Edge: /student/practices/practice_410f2cdf-5d8d-4416-8bc9-cdb4e2b1fe14/documents; Дело практики",
+    "implemented": true,
     "expectedResult": "Версии документов и требования заполнения связаны с практикой",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "S16",
@@ -588,11 +588,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /student/settings; Настройки и видимость",
+    "implemented": true,
     "expectedResult": "Поиск работодателя учитывает настройки в локальном сценарии",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "E01",
@@ -605,11 +605,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer; Кабинет работодателя",
+    "implemented": true,
     "expectedResult": "Счётчики вакансий, кандидатов и практик берутся из хранилища",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "E02",
@@ -622,11 +622,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/company; Компания и проверка",
+    "implemented": true,
     "expectedResult": "Решение оператора меняет статус компании",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E03",
@@ -639,11 +639,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/jobs; Вакансии и стажировки",
+    "implemented": true,
     "expectedResult": "Статусы и число откликов согласованы с выдачей",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E04",
@@ -656,11 +656,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/jobs/offer_13_demo/edit; Редактор предложения",
+    "implemented": true,
     "expectedResult": "Нельзя публиковать неполную или непрофильную карточку",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E05",
@@ -673,11 +673,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/practices; Места практики",
+    "implemented": true,
     "expectedResult": "Свободные и занятые места рассчитываются по практикам",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E06",
@@ -690,11 +690,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/practices/offer_pto_demo/edit; Редактор предложения",
+    "implemented": true,
     "expectedResult": "Проверяются дата, вместимость и обязательные условия",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E07",
@@ -707,11 +707,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/students; Учебные профили для работодателя",
+    "implemented": true,
     "expectedResult": "Сокращённые профили, без контактов и полных оценок",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "E08",
@@ -724,11 +724,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/students/student_anna_demo; Учебные профили для работодателя",
+    "implemented": true,
     "expectedResult": "Нельзя повторно создавать активное приглашение",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "E09",
@@ -741,11 +741,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/offers/offer_pto_demo/applications; Воронка: Практика в отделе ПТО",
+    "implemented": true,
     "expectedResult": "Изменение видно студенту, ограничения этапов соблюдены",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "E10",
@@ -757,12 +757,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /employer/applications/application_d372916d-06df-4299-addc-75739512ff25; Отклик",
+    "evidence": "Маршрут Edge: /employer/applications/application_69f6fad6-cb44-44c0-911f-3600e0cf0cfa; Отклик",
+    "implemented": true,
     "expectedResult": "Причина и история фиксируются; ИИ не принимает решение",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E11",
@@ -775,11 +775,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/interns; Практиканты",
+    "implemented": true,
     "expectedResult": "Один список по практикам компании, фильтр по этапу",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E12",
@@ -791,12 +791,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /employer/practice-cases/practice_2f475478-d0d7-4bdb-9c21-2f446f532f3e; Дело практики",
+    "evidence": "Маршрут Edge: /employer/practice-cases/practice_410f2cdf-5d8d-4416-8bc9-cdb4e2b1fe14; Дело практики",
+    "implemented": true,
     "expectedResult": "Изменения доступны студенту и координатору",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "E13",
@@ -809,11 +809,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/university-requests; Запросы вузов",
+    "implemented": true,
     "expectedResult": "Ответ не назначает конкретных студентов автоматически",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "E14",
@@ -826,11 +826,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/team; Команда и полномочия",
+    "implemented": true,
     "expectedResult": "Ограничения демонстрируются и в кнопках, и в операциях",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "E15",
@@ -843,11 +843,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /employer/analytics; Демонстрационная аналитика",
+    "implemented": true,
     "expectedResult": "Показатели только своей компании и скачивание CSV",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC09: область/фильтр/предложение, нулевой знаменатель, CSV без персональных полей, прирост после SC02, 360 px",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs"
   },
   {
     "id": "U01",
@@ -860,11 +860,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university; Кабинет координатора",
+    "implemented": true,
     "expectedResult": "Очередь соответствует практикам и запросам исправления",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "U02",
@@ -877,11 +877,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/profile; Профиль вуза",
+    "implemented": true,
     "expectedResult": "Публичная карточка отражает разрешённые поля",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "U03",
@@ -894,11 +894,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/programs; Учебные программы",
+    "implemented": true,
     "expectedResult": "Программы связаны с группами, требованиями и навыками",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "U04",
@@ -911,11 +911,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/students; Студенты и группы",
+    "implemented": true,
     "expectedResult": "Только студенты демонстрационного МГСУ",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "U05",
@@ -928,11 +928,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/students/student_anna_demo; Анна Миронова · исправления",
+    "implemented": true,
     "expectedResult": "Изменяется версия образовательных сведений и история",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "Поиск/пустая выдача, источники, версия резюме, исправление/история, помощник, снимок отклика, сохранение",
-    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts",
-    "implemented": true
+    "testEvidence": "B1: tests/b1-browser.mjs, domain/b1.test.ts"
   },
   {
     "id": "U06",
@@ -945,11 +945,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/approvals; Очередь практик",
+    "implemented": true,
     "expectedResult": "Нельзя согласовать без обязательных условий",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "U07",
@@ -961,12 +961,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /university/practices/practice_2f475478-d0d7-4bdb-9c21-2f446f532f3e; Дело практики",
+    "evidence": "Маршрут Edge: /university/practices/practice_410f2cdf-5d8d-4416-8bc9-cdb4e2b1fe14; Дело практики",
+    "implemented": true,
     "expectedResult": "Итог фиксируется координатором после выполнения условий",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "U08",
@@ -979,11 +979,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/company-requests; Запросы компаниям",
+    "implemented": true,
     "expectedResult": "Работодатель видит запрос и может ответить",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "U09",
@@ -996,11 +996,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/requirements; Требования к практике",
+    "implemented": true,
     "expectedResult": "Новая версия применяется к новым делам, старые фиксируют прежнюю",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "U10",
@@ -1013,11 +1013,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/templates; Версии шаблонов",
+    "implemented": true,
     "expectedResult": "Версии уже сформированных документов не меняются задним числом",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "U11",
@@ -1030,11 +1030,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/import; Тестовый импорт",
+    "implemented": true,
     "expectedResult": "Ошибки показаны до применения; повторный импорт не дублирует студентов",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "U12",
@@ -1047,11 +1047,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /university/analytics; Демонстрационная аналитика",
+    "implemented": true,
     "expectedResult": "Понятен знаменатель и период; есть агрегированный CSV",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC09: область/фильтр/предложение, нулевой знаменатель, CSV без персональных полей, прирост после SC02, 360 px",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs"
   },
   {
     "id": "O01",
@@ -1064,11 +1064,11 @@
     "statesChecked": false,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator; Панель оператора",
+    "implemented": true,
     "expectedResult": "Общие счётчики согласованы с данными",
     "actionVerification": "Проверка кода и маршрута; отдельное нажатие не автоматизировано",
     "stateVerification": "Открытие в ожидаемой роли; полный набор состояний требует D",
-    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx",
-    "implemented": true
+    "testEvidence": "tests/c-browser.mjs: аудит 80 маршрутов; features/*View.tsx / main.tsx"
   },
   {
     "id": "O02",
@@ -1081,11 +1081,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/organizations; Проверка компаний",
+    "implemented": true,
     "expectedResult": "Причина и история есть; неподтверждённая компания не публикуется",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "O03",
@@ -1098,11 +1098,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/offers; Модерация предложений",
+    "implemented": true,
     "expectedResult": "Публичная выдача немедленно отражает решение",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "O04",
@@ -1115,11 +1115,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/appeals; Жалобы и обращения",
+    "implemented": true,
     "expectedResult": "Причина решения и статус доступны автору жалобы",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "O05",
@@ -1132,11 +1132,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/dictionaries; Строительные справочники",
+    "implemented": true,
     "expectedResult": "Существующие связи не удаляются; новые формы учитывают активность",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "O06",
@@ -1149,11 +1149,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/content; Справочный контент",
+    "implemented": true,
     "expectedResult": "Публичный текст обновляется; произвольный HTML не исполняется",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "O07",
@@ -1166,11 +1166,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/ai-quality; Качество сценарных примеров",
+    "implemented": true,
     "expectedResult": "Оценка относится к сохранённому примеру, не к реальной модели",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "O08",
@@ -1183,11 +1183,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/users; Тестовые пользователи",
+    "implemented": true,
     "expectedResult": "Роль одна; отключение отражается при выборе роли",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "O09",
@@ -1200,11 +1200,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/reports; Демонстрационная аналитика",
+    "implemented": true,
     "expectedResult": "Только демонстрационные агрегаты, пояснения и CSV",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC09: область/фильтр/предложение, нулевой знаменатель, CSV без персональных полей, прирост после SC02, 360 px",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs"
   },
   {
     "id": "O10",
@@ -1217,11 +1217,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /operator/integrations; Интеграции и журнал",
+    "implemented": true,
     "expectedResult": "Явная имитация с успехом/ошибкой и журналом, без внешнего запроса",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "C01",
@@ -1233,12 +1233,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /messages/application_application_d372916d-06df-4299-addc-75739512ff25; Сообщения",
+    "evidence": "Маршрут Edge: /messages/application_application_69f6fad6-cb44-44c0-911f-3600e0cf0cfa; Сообщения",
+    "implemented": true,
     "expectedResult": "Сообщение появляется у другого участника после смены роли",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "C02",
@@ -1251,11 +1251,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /notifications; Уведомления",
+    "implemented": true,
     "expectedResult": "Счётчик уменьшается, ссылка ведёт к доступному объекту",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "C03",
@@ -1268,11 +1268,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /support; Поддержка",
+    "implemented": true,
     "expectedResult": "Номер, категория, статус и связанный объект сохраняются",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "C04",
@@ -1284,12 +1284,12 @@
     "actionChecked": true,
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
-    "evidence": "Маршрут Edge: /support/ticket_ffd22505-7103-498c-b096-a03590a8348a; Обращение 90a8348a",
+    "evidence": "Маршрут Edge: /support/ticket_6ee66997-cee1-4eff-9b4d-8ac71fd57280; Обращение 1fd57280",
+    "implemented": true,
     "expectedResult": "История доступна автору и оператору",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   },
   {
     "id": "C05",
@@ -1302,11 +1302,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /documents/document_practice_0_agreement_1; Учебная версия: Образец договора",
+    "implemented": true,
     "expectedResult": "Содержимое соответствует зафиксированным данным",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "C06",
@@ -1319,11 +1319,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /documents/document_practice_0_agreement_1/review; Учебная версия: Образец договора",
+    "implemented": true,
     "expectedResult": "Доступные действия зависят от роли и этапа",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC02/SC05/SC06: возврат/исправление, повтор/отмена, последнее место, права, версии, скачивание HTML, итог",
-    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts",
-    "implemented": true
+    "testEvidence": "B2: tests/b2-browser.mjs, domain/b2.test.ts"
   },
   {
     "id": "C07",
@@ -1336,11 +1336,11 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /statistics (modal:export); Открытая статистика",
+    "implemented": true,
     "expectedResult": "Файл содержит ровно разрешённую текущую выборку",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC09: область/фильтр/предложение, нулевой знаменатель, CSV без персональных полей, прирост после SC02, 360 px",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts; B2: tests/b2-browser.mjs"
   },
   {
     "id": "C08",
@@ -1353,10 +1353,10 @@
     "statesChecked": true,
     "defect": "Не выявлен в выполненных проверках; полная матрица второстепенных состояний и физические устройства не проверены",
     "evidence": "Маршрут Edge: /settings/notifications; Настройки уведомлений",
+    "implemented": true,
     "expectedResult": "Обязательные события остаются в центре уведомлений",
     "actionVerification": "Автотест связанного сценария/общего компонента",
     "stateVerification": "SC07/SC08: общее состояние, права, ошибки/подтверждение, upsert, уведомление, сохранение",
-    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts",
-    "implemented": true
+    "testEvidence": "C: tests/c-browser.mjs, domain/c.test.ts"
   }
 ]

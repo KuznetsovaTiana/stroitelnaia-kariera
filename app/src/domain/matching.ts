@@ -17,7 +17,7 @@ export function compareFacts(student:Profile,education:Education|undefined,proje
  if(!student.availability[0]||!student.availability[1])constraints.push({status:'unknown',text:'Нужно уточнить период доступности',evidenceRefs:[student.id+'.availability']});
  else if(offer.startDate<student.availability[0]||offer.endDate>student.availability[1])constraints.push({status:'mismatch',text:'Период предложения не входит в доступность студента',evidenceRefs:[student.id+'.availability',offer.id+'.startDate',offer.id+'.endDate']});
  if(!student.course)constraints.push({status:'unknown',text:'Курс неизвестен',evidenceRefs:[student.id+'.course']});
- else if(student.course<3||student.course>4)constraints.push({status:'mismatch',text:'Предложение рассчитано на 3–4 курс',evidenceRefs:[student.id+'.course',offer.id+'.requirements.course']});
+ else if(student.course<(offer.minCourse??3)||student.course>(offer.maxCourse??4))constraints.push({status:'mismatch',text:`Предложение рассчитано на ${offer.minCourse??3}–${offer.maxCourse??4} курс`,evidenceRefs:[student.id+'.course',offer.id+'.requirements.course']});
  const weight=factors.filter(f=>f.status!=='unknown').reduce((sum,f)=>sum+f.weight,0),coverage=weight/100;
  const score=coverage<.5?null:Math.round(100*factors.reduce((sum,f)=>sum+f.weight*(f.status==='match'?1:f.status==='partial'?.5:0),0)/weight);
  return {factors,constraints,score,coverage,eligible:!constraints.some(c=>c.status==='mismatch')};
@@ -26,10 +26,11 @@ export function compare(state:Envelope,studentId:string,offerId:string):MatchRes
  const data=dataFor(state),student=data.students.find(s=>s.id===studentId),offer=data.offers.find(o=>o.id===offerId);if(!student||!offer)throw new Error('Пара для подбора не найдена');
  const result=compareFacts(student,data.education.find(e=>e.studentId===studentId),data.projects.filter(p=>p.studentId===studentId),offer);
  if(isPublic(offer,state)){result.constraints=result.constraints.filter(c=>!c.text.startsWith('Предложение не опубликовано'));result.eligible=!result.constraints.some(c=>c.status==='mismatch')}else if(!result.constraints.some(c=>c.text.startsWith('Предложение не опубликовано'))){result.constraints.push({status:'mismatch',text:'Предложение не опубликовано или компания не допущена',evidenceRefs:[offer.id+'.status']});result.eligible=false}
+ if(offer.endDate<state.demoClock){result.constraints.push({status:'mismatch',text:'Набор завершён',evidenceRefs:[offer.id+'.endDate']});result.eligible=false}
  if(offer.kind==='practice'&&available(state,offer)<=0){result.constraints.push({status:'mismatch',text:'Свободных мест нет',evidenceRefs:[offer.id+'.capacity']});result.eligible=false}return result;
 }
 export function available(s:Envelope,offer:Offer){return offer.capacity-dataFor(s).practices.filter(p=>p.offerId===offer.id&&p.reservationActive).length}
 export function ranked(s:Envelope,studentId:string,offers:Offer[]){return offers.map(offer=>({offer,result:compare(s,studentId,offer.id)})).sort((a,b)=>Number(b.result.eligible)-Number(a.result.eligible)||(b.result.score??-1)-(a.result.score??-1)||b.result.coverage-a.result.coverage||a.offer.id.localeCompare(b.offer.id))}
-export const offerSchedule=(o:Offer)=>o.kind==='internship'?'Гибкий график':'Полный день';
-export const offerPaid=(o:Offer)=>o.kind!=='practice'||['offer_pto_demo','offer_4_demo','offer_10_demo'].includes(o.id);
+export const offerSchedule=(o:Offer)=>o.schedule??(o.kind==='internship'?'Гибкий график':'Полный день');
+export const offerPaid=(o:Offer)=>o.paid??(o.kind!=='practice'||['offer_pto_demo','offer_4_demo','offer_10_demo'].includes(o.id));
 

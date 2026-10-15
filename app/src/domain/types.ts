@@ -7,13 +7,13 @@ export interface Persona { id: string; role: Role; name: string; studentId?: str
 export interface Student extends Entity { name: string; universityId: string; programId: string; course: number; region: string; interests: string; skills: string[]; availability: [string,string] }
 export interface EducationRecord extends Entity { studentId: string; source: 'university_demo'; sourceDate: string; disciplines: {name:string; result:string}[] }
 export interface Company extends Entity { name: string; status: 'approved'|'pending'|'rejected'|'draft'|'suspended' }
-export interface Offer extends Entity { companyId:string; kind:'practice'|'job'|'internship'; title:string; programId:string; region:string; status:'published'|'draft'|'rejected'|'pending_moderation'|'changes_requested'|'archived'; skills:string[]; startDate:string; endDate:string; capacity:number; supervisor:string }
+export interface Offer extends Entity { paid?:boolean; schedule?:'Полный день'|'Гибкий график'; minCourse?:number; maxCourse?:number; companyId:string; kind:'practice'|'job'|'internship'; title:string; programId:string; region:string; status:'published'|'draft'|'rejected'|'pending_moderation'|'changes_requested'|'archived'; skills:string[]; startDate:string; endDate:string; capacity:number; supervisor:string }
 export type PracticeStatus = 'awaiting_university'|'changes_requested'|'approved'|'in_progress'|'review'|'completed'|'cancelled';
 export interface PracticeCase extends Entity { studentId:string; applicationId:string; offerId:string; status:PracticeStatus; academicResult:'not_assessed'|'credited'|'not_credited'|'needs_revision'; reservationActive:boolean }
 export interface Application extends Entity { studentId:string; offerId:string; selectionStatus:'submitted'|'viewed'|'info_requested'|'interview'|'offered'|'rejected'|'withdrawn'; resumeSnapshot:{title:string; summary:string; version:number} }
 export interface Notification extends Entity { recipientId:string; eventId?:string; text:string; target:string; read:boolean }
 export interface Seed { universities:University[]; programs:Program[]; personas:Persona[]; students:Student[]; education:EducationRecord[]; companies:Company[]; offers:Offer[]; applications:Application[]; practices:PracticeCase[]; resumes:(Entity & {studentId:string;title:string;summary:string})[]; projects:(Entity & {studentId:string;title:string;contribution:string})[] }
-export interface Changes { interests:Record<string,string>; favorites:string[]; notifications:Notification[]; b1?:B1Changes; b2?:B2Changes; c?:CChanges }
+export interface Changes { interests:Record<string,string>; favorites:string[]; favoritesByUser?:Record<string,string[]>; notifications:Notification[]; b1?:B1Changes; b2?:B2Changes; c?:CChanges }
 export interface Envelope { schemaVersion:1; seedVersion:1; revision:number; savedAt:string; demoClock:string; activePersonaId:string; changes:Changes }
 
 export interface University extends Entity { name:string; slug:string; demoOnly:true }

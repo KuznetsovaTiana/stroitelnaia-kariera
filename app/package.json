@@ -1,38 +1,40 @@
 {
-    "name":  "stroitelnaia-kariera-demo",
-    "private":  true,
-    "version":  "0.1.0",
-    "type":  "module",
-    "scripts":  {
-                    "dev":  "vite --host 127.0.0.1",
-                    "build":  "tsc --noEmit \u0026\u0026 vite build",
-                    "preview":  "vite preview --host 127.0.0.1",
-                    "typecheck":  "tsc --noEmit",
-                    "lint":  "eslint .",
-                    "test":  "vitest run",
-                    "test:browser":  "node tests/browser.mjs",
-                    "test:b1":  "node tests/b1-browser.mjs",
-                    "test:b2":  "node tests/b2-browser.mjs",
-                    "test:c":  "node tests/c-browser.mjs",
-                    "coverage": "node scripts/coverage.mjs",
-                    "test:d": "node tests/d-browser.mjs",
-                    "test:static": "node tests/static-browser.mjs",
-                    "test:jury": "node tests/jury-browser.mjs"
-                },
-    "dependencies":  {
-                         "react":  "19.3.0",
-                         "react-dom":  "19.3.0"
-                     },
-    "devDependencies":  {
-                            "@vitejs/plugin-react":  "6.1.2",
-                            "vite":  "8.3.4",
-                            "typescript":  "6.0.3",
-                            "vitest":  "5.0.4",
-                            "@types/react":  "19.3.0",
-                            "@types/react-dom":  "19.3.0",
-                            "eslint":  "10.12.0",
-                            "@eslint/js":  "10.0.1",
-                            "typescript-eslint":  "8.71.2",
-                            "@playwright/test":  "1.64.0"
-                        }
+  "name": "stroitelnaia-kariera-demo",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint .",
+    "test": "vitest run",
+    "test:browser": "node tests/browser.mjs",
+    "test:b1": "node tests/b1-browser.mjs",
+    "test:b2": "node tests/b2-browser.mjs",
+    "test:c": "node tests/c-browser.mjs",
+    "coverage": "node scripts/coverage.mjs",
+    "test:d": "node tests/d-browser.mjs",
+    "test:static": "node tests/static-browser.mjs",
+    "test:jury": "node tests/jury-browser.mjs",
+    "test:audit": "node tests/audit-browser.mjs",
+    "test:entry": "node tests/entry-browser.mjs"
+  },
+  "dependencies": {
+    "react": "19.3.0",
+    "react-dom": "19.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-react": "6.1.2",
+    "vite": "8.3.4",
+    "typescript": "6.0.3",
+    "vitest": "5.0.4",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "eslint": "10.12.0",
+    "@eslint/js": "10.0.1",
+    "typescript-eslint": "8.71.2",
+    "@playwright/test": "1.64.0"
+  }
 }

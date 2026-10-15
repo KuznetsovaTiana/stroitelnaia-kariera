@@ -48,7 +48,7 @@ describe('B1: общие сущности и права',()=>{
   let s=saveProfile(initialState(),{...profile,region:'Казань',relocate:true});
   s=toggleFavorite(s,'offer_pto_demo');s=saveSearch(s,'/practices?program=ПТО','ПТО');
   s=saveAssistant(s,'resume_0',{branch:'ПТО',answers:['ПТО','','','','',''],preview:'',simulateError:false,step:1});
-  expect(dataFor(decode(JSON.stringify(s))).students[0].region).toBe('Казань');expect(decode(JSON.stringify(s)).changes.favorites).toContain('offer_pto_demo');
+  expect(dataFor(decode(JSON.stringify(s))).students[0].region).toBe('Казань');expect(decode(JSON.stringify(s)).changes.favoritesByUser?.persona_anna).toContain('offer_pto_demo');
   expect(()=>decode(JSON.stringify({...s,changes:{...s.changes,b1:{...b1(s),resumes:{bad:{}}}}}))).toThrow();
   expect(decode(JSON.stringify(initialState())).changes.b1).toBeUndefined();
  });

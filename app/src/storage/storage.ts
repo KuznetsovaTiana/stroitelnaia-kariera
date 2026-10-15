@@ -12,6 +12,9 @@ export function decode(raw:string):Envelope {
  if(v.changes.b1!==undefined&&!validB1(v.changes.b1))throw new Error('Сохранение B1 повреждено. Восстановите исходный набор.');
  if(v.changes.b2!==undefined&&!validB2(v.changes.b2))throw new Error('Сохранение B2 повреждено. Восстановите исходный набор.');
  if(v.changes.c!==undefined&&!validC(v.changes.c))throw new Error('Сохранение C повреждено. Восстановите исходный набор.');
+ if(v.changes.favoritesByUser!==undefined&&(typeof v.changes.favoritesByUser!=='object'||v.changes.favoritesByUser===null||Array.isArray(v.changes.favoritesByUser)||!Object.entries(v.changes.favoritesByUser).every(([owner,ids])=>seed.personas.some(p=>p.id===owner&&p.role==='student')&&Array.isArray(ids)&&ids.every(id=>typeof id==='string'))))throw new Error('Избранное повреждено. Восстановите исходный набор.');
+ // Legacy favorites have no owner: retain them for recovery, never assign to a persona.
+ v.changes.favoritesByUser??={};
  return v;
 }
 export function load(storage:StoragePort):{state:Envelope;error:string} {try {const raw=storage.getItem(KEY);return {state:raw?decode(raw):initialState(),error:''};}catch(e){return {state:initialState(),error:e instanceof Error?e.message:'Хранилище недоступно'};}}

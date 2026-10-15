@@ -17,12 +17,12 @@ try{
  await page.getByLabel('Сортировка').selectOption('matching');
  const filtered=await page.evaluate(()=>location.hash);
  await page.getByRole('button',{name:'Сохранить поиск',exact:true}).click();
- await page.getByRole('link',{name:'Практика в отделе ПТО ↗',exact:true}).click();
- assert(await page.getByRole('heading',{name:'Совпадение по указанным критериям: 100%'}).isVisible(),'AC08 full matching');
+ await page.getByRole('link',{name:'Практика в отделе ПТО →',exact:true}).click();
+ assert(await page.getByRole('heading',{name:'Высокое соответствие указанным критериям'}).isVisible(),'AC08 full matching');
  await page.getByRole('link',{name:'Вернуться к выдаче',exact:false}).click();
  assert(await page.evaluate(()=>location.hash)===filtered,'AC02 return filters');
  await page.reload();assert(await page.getByLabel('Учебная траектория',{exact:true}).inputValue()==='ПТО','filters reload');
- await page.getByRole('link',{name:'Практика в отделе ПТО ↗',exact:true}).click();
+ await page.getByRole('link',{name:'Практика в отделе ПТО →',exact:true}).click();
  await page.getByRole('button',{name:'В избранное',exact:true}).click();
  await page.getByRole('button',{name:'Отправить отклик',exact:true}).click();
  assert(await page.getByRole('alert').innerText().then(t=>t.includes('Подтвердите')),'consent error');
@@ -33,10 +33,10 @@ try{
  assert(s.changes.b1.applications.length===1,'one application');
  await page.reload();assert((await stored()).changes.b1.applications.length===1,'no duplicate reload');
  await page.getByLabel('Тестовая роль').selectOption('employer_sever_demo');
- await page.getByRole('link',{name:'Практика в отделе ПТО · Отправлен · Старт в ПТО →',exact:true}).click();
+ await page.getByRole('link',{name:'Анна Миронова · Практика в отделе ПТО · Отправлен · Старт в ПТО →',exact:true}).click();
  await page.getByRole('heading',{name:'Отправленное резюме',exact:false}).waitFor();
  await go('/employer/students/student_anna_demo?offer=offer_pto_demo');
- assert(await page.getByRole('heading',{name:'Совпадение по указанным критериям: 100%'}).isVisible(),'same matching employer');
+ assert(await page.getByRole('heading',{name:'Высокое соответствие указанным критериям'}).isVisible(),'same matching employer');
  assert(!(await page.locator('main').innerText()).includes('Миронова'),'anonymized employer');
  await page.getByLabel('Тестовая роль').selectOption('persona_anna');
  await go('/student/education');
