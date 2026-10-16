@@ -1,0 +1,27 @@
+/* One 20s clock. Only the upper active stage fades, revealing the stage below. */
+.architecture-background[data-phase="cycling"] .architecture-drawing{opacity:1}
+.architecture-background[data-phase="cycling"] .architecture-final,
+.architecture-background[data-phase="cycling"] .architecture-completed{
+ animation-duration:var(--architecture-cycle-duration,20s);
+ animation-timing-function:cubic-bezier(.45,0,.55,1);
+ animation-iteration-count:infinite;animation-fill-mode:both;
+ will-change:opacity;
+}
+.architecture-background[data-phase="cycling"] .architecture-final{animation-name:architecture-construction-cycle}
+.architecture-background[data-phase="cycling"] .architecture-completed{animation-name:architecture-completed-cycle}
+.architecture-background[data-phase="cycling"][data-paused="true"] .architecture-frame img{animation-play-state:paused}
+.architecture-background[data-phase="final"][data-completed="true"] .architecture-completed{opacity:1}
+/* 0–5 drawing, 5–30 concrete, 30–50 completion, 50–55 hold,
+   55–75 back to concrete, 75–95 back to drawing, 95–100 hold.
+   Both ends have identical opacity and zero velocity. */
+@keyframes architecture-construction-cycle{0%,5%{opacity:0}30%,75%{opacity:1}95%,100%{opacity:0}}
+@keyframes architecture-completed-cycle{0%,30%{opacity:0}50%,55%{opacity:1}75%,100%{opacity:0}}
+@media(max-width:700px){
+ /* Preserve the entire shared building frame in portrait, rather than cropping its sides. */
+ .welcome-page .architecture-frame img{object-fit:contain;object-position:center 68%}
+}
+@media(prefers-reduced-motion:reduce){
+ .architecture-background[data-phase="cycling"] .architecture-frame img{animation:none;will-change:auto}
+ .architecture-background[data-phase="cycling"] .architecture-final,
+ .architecture-background[data-phase="cycling"][data-completed="true"] .architecture-completed{opacity:1}
+}

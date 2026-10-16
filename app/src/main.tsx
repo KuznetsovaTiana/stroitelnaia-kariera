@@ -16,8 +16,10 @@ import { switchPersona } from './domain/operations';
 import { KEY, load, persist, reset } from './storage/storage';
 import type { Envelope } from './domain/types';
 import './styles/main.css';
+import './styles/architecture-animation.css';
 import './styles/workspace.css';
 import './styles/profile.css';
+import './styles/typography.css';
 const homes={student:'/student',employer:'/employer',coordinator:'/university',operator:'/operator'};
 const roleNames={student:'Студент',employer:'Работодатель',coordinator:'Координатор вуза',operator:'Оператор'};
 

@@ -24,7 +24,7 @@ try{
    await expect(page).toHaveURL(new RegExp('#/'+home+'$'));await expect(page.locator('.scenario-title')).toContainText(title);
    await page.reload();await expect(page.locator('.scenario-title')).toContainText(title);
    if(width<700)await expect(page.locator('.sidebar nav').first()).toBeVisible();
-   await page.locator('.brand:visible').click();await expect(page).toHaveURL(new RegExp('#/'+home+'$'));
+   await page.locator('.brand:visible').click();await expect(page.getByRole('heading',{name:/Добро пожаловать/})).toBeVisible();await page.getByRole('link',{name:/Вернуться в кабинет/}).click();await expect(page).toHaveURL(new RegExp('#/'+home+'$'));
    await page.getByRole('link',{name:'Сменить роль'}).click();
   }
   expect(errors).toEqual([]);await context.close();console.log('PASS roles, dialog/CTA, close/Escape/Back, reload, logo, overflow at',width,height);

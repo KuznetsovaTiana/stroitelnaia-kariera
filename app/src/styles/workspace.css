@@ -82,8 +82,8 @@
  .workspace>header .personal-identity{grid-column:1;grid-row:2}
 }
 
-@font-face{font-family:"Manrope Brand";src:url("../../public/fonts/Manrope-Variable.ttf") format("truetype");font-style:normal;font-weight:200 800;font-display:swap}
-.brand>span:last-child:not(.brandmark){font-family:"Manrope Brand","Segoe UI",sans-serif;font-weight:600;letter-spacing:-.035em;line-height:1.22}
+
+.brand>span:last-child:not(.brandmark){font-family:var(--font-sans);font-weight:600;letter-spacing:-.035em;line-height:1.22}
 .sidebar .brand{font-size:16px;gap:10px}
 .entry-header .brand{font-size:18px;gap:12px}
 @media(min-width:769px) and (max-width:1050px){.sidebar .brand{font-size:14px;gap:8px}}
