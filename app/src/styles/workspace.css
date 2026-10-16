@@ -1,0 +1,75 @@
+/* Task-focused workspaces, shared by all four roles. */
+.role-home h1{font-size:32px;letter-spacing:-.6px;margin:0 0 10px}
+.role-home .pageheading{margin-bottom:24px}
+.home-priority{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(240px,1fr);gap:24px}
+.home-next{padding:32px;background:#eae5da;border:1px solid #d4cbbb;position:relative;min-width:0}
+.home-next h2{font-size:28px;margin:12px 0;max-width:560px;line-height:1.25}
+.home-next p{max-width:540px;margin-bottom:24px}
+.home-next .button{justify-content:center;max-width:100%;gap:20px;white-space:normal}
+.home-secondary{border:1px solid var(--line);padding:8px 24px;background:var(--paper);min-width:0}
+.home-secondary article{padding:16px 0}
+.home-secondary article+article{border-top:1px solid var(--line)}
+.home-secondary h2{font-size:18px;margin:0}
+.home-secondary p{font-size:14px;margin-bottom:0}
+.home-overview{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:24px;margin:28px 0}
+.home-overview>a{display:flex;flex-direction:column;gap:8px;padding:16px 0;border-top:1px solid var(--line);min-width:0}
+.home-overview strong{font-size:16px;font-weight:500}
+.home-overview span{font-size:14px;color:var(--muted);line-height:1.5}
+.home-recommendations{margin-top:24px}
+.home-recommendations .sectionhead{gap:16px}
+.home-recommendations .sectionhead>a{font-size:14px}
+.home-recommendations h3{font-size:19px;margin-top:0}
+.home-help{margin-top:28px;font-size:14px}
+.home-help a{display:inline-flex;align-items:center;min-height:44px;text-decoration:underline;text-underline-offset:3px}
+.catalog-search{padding:16px 20px;margin:20px 0 24px;background:var(--paper);border:1px solid #b9b1a3}
+.catalog-search .field{margin:0}
+.catalog-search input{background:transparent;min-height:48px;font-size:17px}
+.catalog-search-hint{display:block;margin-top:8px;font-size:12px;color:var(--muted)}
+.searchlayout{grid-template-columns:240px minmax(0,1fr);gap:28px}
+.filters summary,.candidate-filters summary{cursor:pointer;font-weight:500;min-height:32px}
+.search-result h2{font-size:22px;line-height:1.35;margin:14px 0 8px}
+.search-result p{font-size:14px}
+.search-result .sectionhead button{padding:6px 10px;font-size:12px;font-weight:400}
+.candidate-result h2{font-size:22px}
+.context-nav a{font-size:14px;white-space:normal}
+.context-nav a[aria-current]{background:transparent;border-left:0;border-bottom:2px solid #49463f}
+.workspace>header{gap:20px}
+.personal-identity .scenario-persona{font-weight:500}
+.header-change-role.button{border:0;padding:4px 0;min-height:32px;text-decoration:underline;text-underline-offset:3px;font-weight:400}
+.workspace-demo-label{font-size:11px}
+.workspace-footer>span{font-size:12px;font-weight:400;letter-spacing:0}
+.sidebar nav a{font-size:15px;font-weight:400}
+.sidebar nav a[aria-current]{font-weight:500}
+@media(max-width:1100px){
+ .home-priority{grid-template-columns:minmax(0,1fr)}
+ .home-secondary{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;padding:4px 24px}
+ .home-secondary article+article{border-top:0}
+}
+@media(max-width:800px){.searchlayout{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:768px){
+ .role-home h1{font-size:26px}
+ .home-next{padding:22px}
+ .home-next h2{font-size:24px}
+ .home-next .button{width:100%}
+ .home-secondary{display:block;padding:0 20px}
+ .home-secondary article+article{border-top:1px solid var(--line)}
+ .home-overview{grid-template-columns:1fr;gap:0;margin:20px 0}
+ .home-overview>a{padding:16px 0}
+ .home-recommendations .sectionhead{align-items:flex-start;flex-direction:column;gap:0}
+ .catalog-search{padding:14px;margin:16px 0}
+ .catalog-search input{font-size:16px}
+ .search-result h2{font-size:20px}
+ .search-result .sectionhead{align-items:flex-start;gap:8px}
+ .candidate-filters .columns{grid-template-columns:1fr}
+ .workspace>header .personal-identity{min-width:0}
+ .header-change-role.button{font-size:12px;min-height:36px}
+ .sidebar>nav:first-of-type{justify-content:space-around;overflow-x:hidden}
+ .sidebar nav a{font-size:11px;min-width:0;white-space:normal;text-align:center}
+ .context-nav{gap:0;overflow-wrap:anywhere}
+ .context-nav a{font-size:12px;padding:10px 8px}
+ .workspace-footer nav{grid-template-columns:repeat(2,minmax(0,1fr));gap:4px 12px}
+}
+
+:root{--ink:#292824}
+.workspace-footer{font-family:inherit}
+.workspace-footer nav a{font-family:inherit;font-size:12px;line-height:1.5}

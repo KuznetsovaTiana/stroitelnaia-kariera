@@ -19,7 +19,12 @@
     "test:static": "node tests/static-browser.mjs",
     "test:jury": "node tests/jury-browser.mjs",
     "test:audit": "node tests/audit-browser.mjs",
-    "test:entry": "node tests/entry-browser.mjs"
+    "test:entry": "node tests/entry-browser.mjs",
+    "test:more": "node tests/more-browser.mjs",
+    "test:roles": "node tests/role-dialog-browser.mjs",
+    "test:companies": "node tests/companies-browser.mjs",
+    "test:welcome": "node tests/welcome-animation-browser.mjs",
+    "test:navigation": "node tests/navigation-browser.mjs"
   },
   "dependencies": {
     "react": "19.3.0",

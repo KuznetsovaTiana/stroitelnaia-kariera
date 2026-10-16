@@ -3,10 +3,11 @@ import type { B2Changes } from './b2-types';
 import type { B1Changes } from './b1-types';
 export type Role = 'student' | 'employer' | 'coordinator' | 'operator';
 export interface Entity { id: string; version: number; createdAt: string; updatedAt: string }
-export interface Persona { id: string; role: Role; name: string; studentId?: string; organizationId?: string; subrole?:Subrole; active?:boolean }
-export interface Student extends Entity { name: string; universityId: string; programId: string; course: number; region: string; interests: string; skills: string[]; availability: [string,string] }
+export interface PersonName { photoUrl?:string; name:string; firstName?:string; lastName?:string; patronymic?:string }
+export interface Persona extends PersonName { id: string; role: Role; name: string; studentId?: string; organizationId?: string; subrole?:Subrole; active?:boolean }
+export interface Student extends Entity, PersonName { name: string; universityId: string; programId: string; course: number; region: string; interests: string; skills: string[]; availability: [string,string] }
 export interface EducationRecord extends Entity { studentId: string; source: 'university_demo'; sourceDate: string; disciplines: {name:string; result:string}[] }
-export interface Company extends Entity { name: string; status: 'approved'|'pending'|'rejected'|'draft'|'suspended' }
+export interface Company extends Entity { logoUrl?:string; name: string; status: 'approved'|'pending'|'rejected'|'draft'|'suspended' }
 export interface Offer extends Entity { paid?:boolean; schedule?:'Полный день'|'Гибкий график'; minCourse?:number; maxCourse?:number; companyId:string; kind:'practice'|'job'|'internship'; title:string; programId:string; region:string; status:'published'|'draft'|'rejected'|'pending_moderation'|'changes_requested'|'archived'; skills:string[]; startDate:string; endDate:string; capacity:number; supervisor:string }
 export type PracticeStatus = 'awaiting_university'|'changes_requested'|'approved'|'in_progress'|'review'|'completed'|'cancelled';
 export interface PracticeCase extends Entity { studentId:string; applicationId:string; offerId:string; status:PracticeStatus; academicResult:'not_assessed'|'credited'|'not_credited'|'needs_revision'; reservationActive:boolean }

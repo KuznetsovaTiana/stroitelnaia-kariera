@@ -129,3 +129,6 @@ Remove-Item Env:DEMO_BASE_URL
 ### Приветствие и вход
 
 Откройте `/#/` → «Выбрать роль» → роль и профиль → «Начать тестирование». Логотип возвращает на приветствие с сохранением сценария. Проверка: `npm run test:entry`, preview на 4186 либо DEMO_BASE_URL.
+
+
+Проверка новой архитектуры задач: npm run test:navigation (production preview на 4187 либо DEMO_BASE_URL). Карта всех 80 представлений: [navigation-audit.md](../docs/navigation-audit.md).

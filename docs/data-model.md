@@ -16,7 +16,7 @@
 | CorrectionRequest | studentId, recordId, fieldPath, proposedValue, reason, status, resolution | pending / approved / rejected, решение координатора |
 | Project | studentId, title, task, personalContribution, tools[], outcome, source | Учебный опыт, не трудовой стаж |
 | Resume | studentId, title, target, summary, projectIds, skillClaims[], visibility, version | Черновик или готово; факты и описание раздельно |
-| Company | name, constructionAreas[], regions[], description, verificationStatus, history[] | draft / pending / approved / rejected / suspended |
+| Company | name, logoUrl?, constructionAreas[], regions[], description, verificationStatus, history[] | draft / pending / approved / rejected / suspended |
 | TeamMember | companyId, userId, subrole, assignedOfferIds[] | Полномочия внутри одной компании |
 | Offer | companyId, kind, title, professionId, location, schedule, compensation, requirements, status, version | kind: practice / internship / job; единые общие поля |
 | PracticeOfferFields | practiceType, startDate, endDate, durationHours, capacity, supervisorId, expectedTasks, universityCompatibility | Расширение Offer для kind=practice; поля вместимости и сроков обязательны |

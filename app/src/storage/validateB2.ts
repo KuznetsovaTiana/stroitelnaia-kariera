@@ -13,6 +13,6 @@ export function validB2(value:unknown):value is B2Changes{
  list(value.messages,v=>entity(v)&&['application','practice'].includes(String(v.contextType))&&str(v.contextId)&&str(v.authorId)&&str(v.text)&&str(v.requestId,100))&&
  list(value.invitations,v=>entity(v)&&str(v.companyId)&&str(v.studentId)&&str(v.offerId)&&str(v.message)&&['pending','accepted','declined','cancelled'].includes(String(v.status))&&(v.applicationId===undefined||str(v.applicationId)))&&
  map(value.offers,v=>offer(v)&&str(v.practiceType)&&Number.isInteger(v.durationHours)&&str(v.expectedTasks)&&str(v.universityCompatibility))&&
- map(value.companies,v=>entity(v)&&str(v.name)&&str(v.description)&&['draft','pending','approved','rejected','suspended'].includes(String(v.status)));
+ map(value.companies,v=>entity(v)&&(v.logoUrl===undefined||str(v.logoUrl,2000))&&str(v.name)&&str(v.description)&&['draft','pending','approved','rejected','suspended'].includes(String(v.status)));
 }
 
