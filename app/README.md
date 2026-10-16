@@ -132,3 +132,5 @@ Remove-Item Env:DEMO_BASE_URL
 
 
 Проверка новой архитектуры задач: npm run test:navigation (production preview на 4187 либо DEMO_BASE_URL). Карта всех 80 представлений: [navigation-audit.md](../docs/navigation-audit.md).
+
+Проверка единой страницы профиля: npm run test:profile — редакторы, источники, сохранение, возврат, видимость и адаптивность.

@@ -64,7 +64,7 @@ try{
  await page.getByLabel('Учебный результат',{exact:true}).fill('Подготовила пояснительную записку');
  await page.getByLabel('Инструменты через запятую').fill('Таблицы, График работ');
  await page.getByRole('button',{name:'Сохранить проект'}).click();
- await go('/student/profile');assert(await page.getByRole('link',{name:'Учебный график корпуса',exact:false}).isVisible(),'project persisted');
+ await go('/student/profile');assert(await page.getByRole('heading',{name:'Учебный график корпуса',exact:false}).isVisible(),'project persisted');
  await go('/student/resumes/resume_0/assistant');
  const answers=['Хочу в ПТО','График учебного корпуса','Построила график работ','Таблицы','Учебная записка','Москва, ноябрь'];
  const labels=['Какова ваша цель?','Какую учебную задачу вы решали?','Что сделали лично вы?','Какие инструменты использовали?','Каков учебный результат?','Какие условия вас интересуют?'];

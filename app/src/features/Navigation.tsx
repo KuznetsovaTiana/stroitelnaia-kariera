@@ -27,13 +27,13 @@ function active(url:string,route:string,role:Role){
 export function Navigation({role,route,state}:{role:Role;route:string;state:Envelope}){
  const links=primary[role].filter(([url])=>allowed(state,url));
  if(role==='employer'&&!canEmployer(state,'search'))links.splice(1,0,['/employer/interns','Практиканты']);
- return <aside className="sidebar"><a className="brand" href={'#'+homes[role]} aria-label="Строительная карьера — главная кабинета"><span className="brandmark"><img src="./brand/site-logo.svg" alt="" width="352" height="200" aria-hidden="true"/></span><span>Строительная<br/>карьера</span></a><nav aria-label="Основная навигация">{links.map(([url,label])=><a key={url} href={'#'+url} aria-current={active(url,route,role)?'page':undefined}>{label}</a>)}</nav>{role==='student'&&<a className="desktop-more" href="#/student/more" aria-current={route==='/student/more'?'page':undefined}>Ещё</a>}</aside>;
+ return <aside className="sidebar"><a className="brand" href="#/" aria-label="Строительная карьера — приветственная страница"><span className="brandmark"><img src="./brand/site-logo.svg" alt="" width="352" height="200" aria-hidden="true"/></span><span>Строительная<br/>карьера</span></a><nav aria-label="Основная навигация">{links.map(([url,label])=><a key={url} href={'#'+url} aria-current={active(url,route,role)?'page':undefined}>{label}</a>)}</nav>{role==='student'&&<a className="desktop-more" href="#/student/more" aria-current={route==='/student/more'?'page':undefined}>Ещё</a>}</aside>;
 }
 export function ContextNavigation({role,route,expanded=false,state}:{role:Role;route:string;expanded?:boolean;state:Envelope}){
  const visible=groups[role].map(([title,links])=>[title,links.filter(([url])=>allowed(state,url))] as [string,Link[]]).filter(([,links])=>links.length);
  if(expanded)return <div className="more-groups">{visible.map(([title,links])=><section key={title}><h2>{title}</h2><nav aria-label={title}>{links.map(([url,label])=><a href={'#'+url} key={url}>{label} →</a>)}</nav></section>)}<section><h2>Связь и настройки</h2><nav><a href="#/messages">Сообщения</a><a href="#/support">Поддержка</a><a href="#/settings/notifications">Настройки уведомлений</a></nav></section></div>;
  const path=route.split('?')[0];
- if(path===homes[role]||path.endsWith('/more'))return null;
+ if(path===homes[role]||path.endsWith('/more')||path==='/student/profile')return null;
  const group=visible.find(([,links])=>links.some(([url])=>path===url||path.startsWith(url+'/')));
  return group?<nav className="context-nav" aria-label={group[0]}>{group[1].map(([url,label])=><a href={'#'+url} key={url} aria-current={path===url||path.startsWith(url+'/')?'page':undefined}>{label}</a>)}</nav>:null;
 }

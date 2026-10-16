@@ -14,7 +14,7 @@ export function RoleHome({state}:{state:Envelope}){
   const applications=data.applications.filter(a=>a.studentId===student.id&&!['withdrawn','rejected'].includes(a.selectionStatus));
   const practice=data.practices.filter(c=>c.studentId===student.id&&c.status!=='cancelled').at(-1);
   const application=applications.at(-1);
-  title=student.name.split(' ')[0]+', ваш следующий шаг';intro='От поиска места до результата практики.';
+  title=(student.firstName??student.name.split(' ')[0])+', ваш следующий шаг';intro='От поиска места до результата практики.';
   main=practice?{title:practice.status==='completed'?'Посмотреть результат практики':'Продолжить практику',detail:practice.status==='completed'?'Практика завершена. Итог и учебные документы доступны в деле.':'Документы, задания и сообщения участников — в одном деле.',href:'/student/practices/'+practice.id}:application?{title:'Посмотреть ответ работодателя',detail:'Отклик отправлен. Следите за этапом отбора и отвечайте компании в карточке отклика.',href:'/student/applications/'+application.id}:{title:'Найти практику',detail:'Выберите место по вашей траектории, сравните условия и отправьте резюме.',href:'/practices'};
   secondary=[{title:'Подготовить резюме',detail:'Опишите проекты и навыки. Помощник доступен внутри резюме.',href:'/student/resumes'},{title:'Мой профиль',detail:student.programId+' · '+student.course+' курс · условия поиска и образование',href:'/student/profile'}];
   items=[{title:'Отклики и приглашения',detail:'Активных откликов: '+applications.length,href:'/student/applications'},{title:'Мои практики',detail:'Текущие дела и завершённые результаты',href:'/student/practices'},{title:'Избранное',detail:'Сохранённые предложения и условия поиска',href:'/student/saved'}];

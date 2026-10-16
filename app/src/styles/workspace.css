@@ -73,3 +73,18 @@
 :root{--ink:#292824}
 .workspace-footer{font-family:inherit}
 .workspace-footer nav a{font-family:inherit;font-size:12px;line-height:1.5}
+
+@media(max-width:768px){
+ .workspace>header{grid-template-columns:minmax(0,1fr)}
+ .workspace>header .header-context{grid-column:1;gap:10px}
+ .workspace>header .header-context .mobile-brand{display:flex;margin-right:2px}
+ .workspace>header .header-context .mobile-brand .brandmark{width:34px;height:40px}
+ .workspace>header .personal-identity{grid-column:1;grid-row:2}
+}
+
+@font-face{font-family:"Manrope Brand";src:url("../../public/fonts/Manrope-Variable.ttf") format("truetype");font-style:normal;font-weight:200 800;font-display:swap}
+.brand>span:last-child:not(.brandmark){font-family:"Manrope Brand","Segoe UI",sans-serif;font-weight:600;letter-spacing:-.035em;line-height:1.22}
+.sidebar .brand{font-size:16px;gap:10px}
+.entry-header .brand{font-size:18px;gap:12px}
+@media(min-width:769px) and (max-width:1050px){.sidebar .brand{font-size:14px;gap:8px}}
+@media(max-width:700px){.entry-header .brand{font-size:15px;gap:8px}.entry-header .brand .brandmark{width:36px}}

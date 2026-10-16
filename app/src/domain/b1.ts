@@ -1,4 +1,7 @@
-﻿import { activeActor } from './access';
+import { withDemoPatronymic } from './personName';
+import { validProfessional } from './profile-details';
+import type { ProfessionalProfile } from './profile-details';
+import { activeActor } from './access';
 import { cState } from './c-types';
 import type { Organization } from './b2-types';
 import { seedCases, seedDocuments, seedTasks, seedInvitations, enrichedOffer } from '../data/b2-seed';
@@ -12,7 +15,7 @@ export function dataFor(state:Envelope){
  const changes=b1(state),b2=state.changes.b2??emptyB2();
  return {
   ...seed,
-  personas:seed.personas.map(p=>({...p,active:!cState(state).inactive.includes(p.id)})),
+  personas:seed.personas.map(p=>withDemoPatronymic({...p,active:!cState(state).inactive.includes(p.id)})),
   universities:seed.universities.map(u=>({...u,description:cState(state).universityDescription})),
   programs:seed.programs.map(p=>({...p,name:cState(state).programs[p.id]?.name??p.name,skillIds:cState(state).programs[p.id]?.skills??p.skillIds,group:cState(state).programs[p.id]?.group??'Учебная группа'})),
   companies:merge(seed.companies.map((c):Organization=>({...c,description:'Вымышленная строительная компания'})),b2.companies),
@@ -22,7 +25,7 @@ export function dataFor(state:Envelope){
   tasks:merge(seedTasks,Object.fromEntries(b2.tasks.map(t=>[t.id,t]))),
   invitations:merge(seedInvitations,Object.fromEntries(b2.invitations.map(i=>[i.id,i]))),
   messages:b2.messages,
-  students:[...seed.students.map((s,i):Profile=>({...s,schedule:'Полный день',relocate:false,visibility:'visible',...(changes.profiles[s.id] as Partial<Profile>|undefined),group:cState(state).programs[s.programId]?.group??changes.profiles[s.id]?.group??'Учебная группа',interests:state.changes.interests[s.id]??changes.profiles[s.id]?.interests??s.interests, ...(i===11&&!changes.profiles[s.id]?{region:'',schedule:''}:{})})),...Object.values(cState(state).importedProfiles)],
+  students:[...seed.students.map((s,i):Profile=>({...s,schedule:'Полный день',relocate:false,visibility:'visible',...(changes.profiles[s.id] as Partial<Profile>|undefined),group:cState(state).programs[s.programId]?.group??changes.profiles[s.id]?.group??'Учебная группа',interests:state.changes.interests[s.id]??changes.profiles[s.id]?.interests??s.interests, ...(i===11&&!changes.profiles[s.id]?{region:'',schedule:''}:{})})),...Object.values(cState(state).importedProfiles)].map(withDemoPatronymic),
   education:[...seed.education.map((e,i):Education=>({...e,skills:seed.students[i].skills,history:[],...(changes.education[e.id] as Partial<Education>|undefined)})),...Object.values(cState(state).importedEducation)],
   projects:merge(seed.projects.map(p=>({...p,task:'Планирование учебного строительного объекта',tools:seed.students.find(s=>s.id===p.studentId)!.skills,outcome:'Учебная схема и пояснительная записка',source:'university_demo' as const,programId:seed.students.find(s=>s.id===p.studentId)!.programId})),changes.projects),
   resumes:merge(seed.resumes.map((r,i)=>({...r,target:seed.students.find(s=>s.id===r.studentId)!.programId,projectIds:seed.projects.filter(p=>p.studentId===r.studentId).map(p=>p.id),skillClaims:[],status:'ready' as const,primary:i<12,origin:'student' as const})),changes.resumes),
@@ -72,3 +75,9 @@ export function markNotification(s:Envelope,id:string){return update(s,next=>{co
 
 
 
+
+export function saveProfessional(s:Envelope,details:ProfessionalProfile){
+ const studentId=studentActor(s),profile=dataFor(s).students.find(p=>p.id===studentId)!;
+ if(!validProfessional(details))throw new Error('Проверьте поля: даты, email, обязательные названия и ограничения длины.');
+ return update(s,(_,c)=>{c.profiles[studentId]={...profile,professional:structuredClone(details),version:profile.version+1,updatedAt:at(s)}},'profile.professional.updated',studentId);
+}

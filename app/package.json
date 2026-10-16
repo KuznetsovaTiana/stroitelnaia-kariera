@@ -24,7 +24,8 @@
     "test:roles": "node tests/role-dialog-browser.mjs",
     "test:companies": "node tests/companies-browser.mjs",
     "test:welcome": "node tests/welcome-animation-browser.mjs",
-    "test:navigation": "node tests/navigation-browser.mjs"
+    "test:navigation": "node tests/navigation-browser.mjs",
+    "test:profile": "node tests/profile-browser.mjs"
   },
   "dependencies": {
     "react": "19.3.0",

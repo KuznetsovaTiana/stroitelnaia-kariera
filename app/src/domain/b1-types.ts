@@ -1,5 +1,6 @@
-﻿import type { Entity, Student, EducationRecord, Application, CorrectionRequest, AuditEvent } from './types';
-export interface Profile extends Student { schedule:string; relocate:boolean; visibility:'visible'|'hidden'; group?:string }
+import type { ProfessionalProfile } from './profile-details';
+import type { Entity, Student, EducationRecord, Application, CorrectionRequest, AuditEvent } from './types';
+export interface Profile extends Student { professional?:ProfessionalProfile; schedule:string; relocate:boolean; visibility:'visible'|'hidden'; group?:string }
 export interface Education extends EducationRecord { skills:string[]; history:{requestId:string;fieldPath:string;oldValue:string;newValue:string;at:string;resolution:string}[] }
 export interface Project extends Entity {studentId:string;title:string;task:string;contribution:string;tools:string[];outcome:string;source:'university_demo'|'student';programId:string}
 export interface Resume extends Entity {studentId:string;title:string;target:string;summary:string;projectIds:string[];skillClaims:string[];status:'draft'|'ready';primary:boolean;origin:'student'|'scripted_assistant'}

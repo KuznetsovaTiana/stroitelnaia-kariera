@@ -1,4 +1,5 @@
-﻿import { seed } from '../data/seed';
+import { validProfessional } from '../domain/profile-details';
+import { seed } from '../data/seed';
 import type { B1Changes } from '../domain/b1-types';
 // Validate persisted collections before they reach forms or domain operations.
 export function validB1(value:unknown):value is B1Changes {
@@ -12,7 +13,7 @@ export function validB1(value:unknown):value is B1Changes {
  for(const key of ['profiles','education','projects','resumes']){const collection=value[key];if(!obj(collection)||!Object.entries(collection).every(([id,item])=>obj(item)&&item.id===id))return false}
  if(!Object.values(value.education as Record<string,unknown>).every(item=>obj(item)&&seed.education.some(e=>e.id===item.id&&e.studentId===item.studentId)))return false;
  if(!Object.values(value.profiles as Record<string,unknown>).every(item=>obj(item)&&seed.students.some(s=>s.id===item.id&&s.universityId===item.universityId)))return false;
- return map(value.profiles,v=>entity(v)&&str(v.name)&&str(v.studentId??'')&&str(v.universityId)&&str(v.programId)&&typeof v.course==='number'&&str(v.region)&&str(v.interests)&&strings(v.skills)&&Array.isArray(v.availability)&&v.availability.length===2&&v.availability.every(x=>str(x))&&str(v.schedule)&&typeof v.relocate==='boolean'&&['visible','hidden'].includes(String(v.visibility)))&&
+ return map(value.profiles,v=>(v.professional===undefined||validProfessional(v.professional))&&entity(v)&&str(v.name)&&str(v.studentId??'')&&str(v.universityId)&&str(v.programId)&&typeof v.course==='number'&&str(v.region)&&str(v.interests)&&strings(v.skills)&&Array.isArray(v.availability)&&v.availability.length===2&&v.availability.every(x=>str(x))&&str(v.schedule)&&typeof v.relocate==='boolean'&&['visible','hidden'].includes(String(v.visibility)))&&
  map(value.education,v=>entity(v)&&str(v.studentId)&&v.source==='university_demo'&&str(v.sourceDate)&&strings(v.skills)&&Array.isArray(v.disciplines)&&v.disciplines.length>0&&list(v.disciplines,d=>str(d.name)&&str(d.result))&&list(v.history,h=>str(h.requestId)&&str(h.fieldPath)&&str(h.oldValue)&&str(h.newValue)&&str(h.at)&&str(h.resolution)))&&
  map(value.projects,v=>entity(v)&&str(v.studentId)&&str(v.title)&&str(v.task)&&str(v.contribution)&&strings(v.tools)&&str(v.outcome)&&str(v.programId)&&['student','university_demo'].includes(String(v.source)))&&
  map(value.resumes,v=>entity(v)&&str(v.studentId)&&str(v.title)&&['ПТО','BIM/ТИМ','Сметное дело','Проектирование'].includes(String(v.target))&&str(v.summary)&&strings(v.projectIds)&&strings(v.skillClaims)&&['draft','ready'].includes(String(v.status))&&typeof v.primary==='boolean'&&['student','scripted_assistant'].includes(String(v.origin)))&&

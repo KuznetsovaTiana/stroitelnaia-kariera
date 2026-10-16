@@ -1,4 +1,5 @@
-﻿import { extraEmployees } from '../domain/c-types';
+import { withDemoPatronymic } from '../domain/personName';
+import { extraEmployees } from '../domain/c-types';
 import type { Seed, Entity, Envelope } from '../domain/types';
 const at='2026-10-14T09:00:00.000Z';
 const entity=(id:string):Entity=>({id,version:1,createdAt:at,updatedAt:at});
@@ -22,6 +23,8 @@ export const seed:Seed={
  resumes:[...ids.map((studentId,i)=>({...entity(`resume_${i}`),studentId,title:`Старт в ${programs[i%4]}`,summary:'Учебный проект, без профессионального стажа'})),{...entity('resume_anna_2'),studentId:ids[0],title:'Организация строительства',summary:'Интерес к планированию работ'}],
  projects:ids.map((studentId,i)=>({...entity(`project_${i}`),studentId,title:`Учебный проект · ${programs[i%4]}`,contribution:i===0?'Подготовила график производства работ и таблицу ресурсов.':'Подготовил фрагмент учебного проекта'}))
 };
+seed.personas=seed.personas.map(withDemoPatronymic);
+seed.students=seed.students.map(withDemoPatronymic);
 export const initialState=():Envelope=>({schemaVersion:1,seedVersion:1,revision:0,savedAt:at,demoClock:'2026-10-14',activePersonaId:'persona_anna',changes:{interests:{},favorites:[],notifications:[]}});
 
 
