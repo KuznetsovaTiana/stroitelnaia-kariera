@@ -1,9 +1,8 @@
 ﻿import { describe,it,expect } from 'vitest';
 import { initialState,seed } from '../data/seed';
-import { b1,dataFor,requestCorrection,resolveCorrection,submitApplication,saveResume,saveProfile,newProject,saveProject,saveAssistant,toggleFavorite,saveSearch } from './b1';
+import { b1,dataFor,requestCorrection,resolveCorrection,submitApplication,saveResume,saveProfile,newProject,saveProject,toggleFavorite,saveSearch } from './b1';
 import { compare,compareFacts,ranked } from './matching';
 import { switchPersona } from './operations';
-import { scriptedAssistant } from '../adapters/scriptedAssistant';
 import { decode } from '../storage/storage';
 const coordinator=(s:ReturnType<typeof initialState>)=>switchPersona(s,'coordinator_mgsu_demo',seed);
 describe('B1: общие сущности и права',()=>{
@@ -47,7 +46,7 @@ describe('B1: общие сущности и права',()=>{
   const profile=dataFor(initialState()).students[0];
   let s=saveProfile(initialState(),{...profile,region:'Казань',relocate:true});
   s=toggleFavorite(s,'offer_pto_demo');s=saveSearch(s,'/practices?program=ПТО','ПТО');
-  s=saveAssistant(s,'resume_0',{branch:'ПТО',answers:['ПТО','','','','',''],preview:'',simulateError:false,step:1});
+  s={...s,changes:{...s.changes,b1:{...b1(s),assistant:{resume_0:{branch:'ПТО',answers:['ПТО','','','','',''],preview:'',simulateError:false,step:1}}}}};
   expect(dataFor(decode(JSON.stringify(s))).students[0].region).toBe('Казань');expect(decode(JSON.stringify(s)).changes.favoritesByUser?.persona_anna).toContain('offer_pto_demo');
   expect(()=>decode(JSON.stringify({...s,changes:{...s.changes,b1:{...b1(s),resumes:{bad:{}}}}}))).toThrow();
   expect(decode(JSON.stringify(initialState())).changes.b1).toBeUndefined();
@@ -73,15 +72,10 @@ describe('AC08: подбор',()=>{
   expect(ranked(initialState(),p.id,[...seed.offers]).map(r=>r.offer.id)).toEqual(ranked(initialState(),p.id,[...seed.offers].reverse()).map(r=>r.offer.id));
  });
 });
-describe('AC07: сценарный помощник',()=>{
- it('использует ответы в четырёх ветвях, не добавляет достижения, отмена/ошибка не меняют резюме',()=>{
-  const answers=['Хочу в ПТО','Учебная схема','Построила график','Таблицы','Пояснительная записка','Москва'];
-  const first=scriptedAssistant('ПТО',answers);const second=scriptedAssistant('BIM/ТИМ',['Модель',...answers.slice(1)]);
-  expect(first.text).not.toBe(second.text);expect(first.text).toContain('Построила график');expect(first.text).not.toContain('20%');
-  for(const branch of ['ПТО','BIM/ТИМ','Проектирование','Сметное дело'])expect(scriptedAssistant(branch,answers).text).toContain(branch);
-  expect(scriptedAssistant('ПТО',Array(6).fill('')).missing).toHaveLength(6);
-  expect(()=>scriptedAssistant('ПТО',answers,true)).toThrow('Контрольная ошибка');
-  const s=saveAssistant(initialState(),'resume_0',{branch:'ПТО',answers,preview:first.text,simulateError:true,step:5});
-  expect(dataFor(s).resumes[0].summary).toBe(dataFor(initialState()).resumes[0].summary);
+describe('Совместимость старых черновиков помощника',()=>{
+ it('читает прежний черновик, не меняя резюме',()=>{
+  const state=initialState(),resume=dataFor(state).resumes[0];
+  const saved={...state,changes:{...state.changes,b1:{...b1(state),assistant:{[resume.id]:{branch:'ПТО',answers:['Хочу в ПТО','','','','',''],preview:'Старый текст',simulateError:false,step:0}}}}};
+  expect(dataFor(decode(JSON.stringify(saved))).resumes[0]).toEqual(resume);
  });
 });

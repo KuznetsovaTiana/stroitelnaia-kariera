@@ -51,9 +51,15 @@ export function LanguagesEditor({details,onCancel,save}:Base){
  {items.map((r,i)=><fieldset key={i}><legend>Язык {i+1}</legend><Field label="Язык"><input required maxLength={80} value={r.name} onChange={e=>edit(i,{name:e.target.value})}/></Field><Field label="Уровень"><select value={r.level} onChange={e=>edit(i,{level:e.target.value})}>{['Родной','A1','A2','B1','B2','C1','C2'].map(s=><option key={s}>{s}</option>)}</select></Field><button type="button" data-profile-change onClick={()=>setItems(items.filter((_,n)=>n!==i))}>Удалить язык {i+1}</button></fieldset>)}
  <button type="button" data-profile-change disabled={items.length>=12} onClick={()=>setItems([...items,{name:'',level:'Родной',source:'student'}])}>Добавить язык</button></EditorPanel>;
 }
-export function ContactsEditor({details,student,onCancel,save}:{student:Profile}&Omit<Base,'save'>&{save:(value:ProfessionalProfile,visibility:Profile['visibility'])=>boolean}){
- const [contacts,setContacts]=useState(details.contacts),[visibility,setVisibility]=useState(student.visibility);
- return <EditorPanel title="Контакты и видимость" onCancel={onCancel} onSave={()=>save({...details,contacts},visibility)}>
- <Field label="Телефон"><input type="tel" maxLength={40} value={contacts.phone} onChange={e=>setContacts({...contacts,phone:e.target.value})}/></Field><Field label="Email"><input type="email" maxLength={120} value={contacts.email} onChange={e=>setContacts({...contacts,email:e.target.value})}/></Field><Field label="Telegram"><input maxLength={80} value={contacts.telegram} onChange={e=>setContacts({...contacts,telegram:e.target.value})}/></Field><Field label="Видимость в поиске работодателя"><select value={visibility} onChange={e=>setVisibility(e.target.value as Profile['visibility'])}><option value="visible">Виден</option><option value="hidden">Скрыт</option></select></Field><p className="tiny">Скрытие из поиска не отменяет уже отправленные отклики. Для общения с работодателем используется переписка в отклике.</p>
+export function ContactsEditor({details,onCancel,save}:Base){
+ const [contacts,setContacts]=useState(details.contacts);
+ return <EditorPanel title="Редактировать контакты" onCancel={onCancel} onSave={()=>save({...details,contacts})}>
+ <Field label="Телефон"><input type="tel" maxLength={40} value={contacts.phone} onChange={e=>setContacts({...contacts,phone:e.target.value})}/></Field><Field label="Email"><input type="email" maxLength={120} value={contacts.email} onChange={e=>setContacts({...contacts,email:e.target.value})}/></Field><Field label="Telegram"><input maxLength={80} value={contacts.telegram} onChange={e=>setContacts({...contacts,telegram:e.target.value})}/></Field>
+ </EditorPanel>;
+}
+export function VisibilityEditor({student,onCancel,save}:{student:Profile;onCancel:()=>void;save:(visibility:Profile['visibility'])=>boolean}){
+ const [visibility,setVisibility]=useState(student.visibility);
+ return <EditorPanel title="Настроить видимость" onCancel={onCancel} onSave={()=>save(visibility)}>
+ <Field label="Видимость в поиске работодателя"><select value={visibility} onChange={e=>setVisibility(e.target.value as Profile['visibility'])}><option value="visible">Виден</option><option value="hidden">Скрыт</option></select></Field><p className="tiny">Скрытие из поиска не отменяет уже отправленные отклики. Для общения с работодателем используется переписка в отклике.</p>
  </EditorPanel>;
 }

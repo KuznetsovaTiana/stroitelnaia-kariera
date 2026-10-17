@@ -134,3 +134,9 @@ Remove-Item Env:DEMO_BASE_URL
 Проверка новой архитектуры задач: npm run test:navigation (production preview на 4187 либо DEMO_BASE_URL). Карта всех 80 представлений: [navigation-audit.md](../docs/navigation-audit.md).
 
 Проверка единой страницы профиля: npm run test:profile — редакторы, источники, сохранение, возврат, видимость и адаптивность.
+
+## ИИ-помощник и Netlify Functions
+
+См. [подробную инструкцию](../docs/gigachat-integration.md): аудит, файлы, env, Netlify и ручная проверка. Base directory Netlify — app; build/publish сохраняются. Скопируйте .env.example в .env.local, задайте AI_MODE=mock для локальной проверки без модели либо live и серверные credentials. Перезапустите npm.cmd run dev. Vite предоставляет серверный endpoint; preview обслуживает только статику. Секреты не должны иметь префикса VITE_.
+
+Браузерная AI-проверка: запустите dev в mock на порту 5190 и выполните npm.cmd run test:ai; при другом порте задайте DEMO_BASE_URL. Без credentials live показывает недоступность, остальные сценарии работают.

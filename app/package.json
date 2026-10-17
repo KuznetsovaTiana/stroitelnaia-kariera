@@ -26,7 +26,8 @@
     "test:welcome": "node tests/welcome-animation-browser.mjs",
     "test:navigation": "node tests/navigation-browser.mjs",
     "test:profile": "node tests/profile-browser.mjs",
-    "test:typography": "node tests/typography-browser.mjs"
+    "test:typography": "node tests/typography-browser.mjs",
+    "test:ai": "node tests/ai-browser.mjs"
   },
   "dependencies": {
     "react": "19.3.0",
@@ -42,6 +43,7 @@
     "eslint": "10.12.0",
     "@eslint/js": "10.0.1",
     "typescript-eslint": "8.71.2",
-    "@playwright/test": "1.64.0"
+    "@playwright/test": "1.64.0",
+    "@types/node": "24.19.2"
   }
 }

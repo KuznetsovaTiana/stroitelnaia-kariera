@@ -9,7 +9,7 @@ try{
  const edit=async(name)=>{await page.getByRole('button',{name,exact:true}).click();return page.locator('.profile-editor')};
  const save=async()=>{await page.locator('.profile-editor').getByRole('button',{name:'Сохранить',exact:true}).click();await expect(page.locator('.profile-editor')).toHaveCount(0)};
  await enter('student','persona_anna');await profile();
- expect(await page.locator('.student-profile-section').count()).toBe(9);
+ expect(await page.locator('.student-profile-section').count()).toBe(12);
  await expect(page.locator('#profile-experience')).toContainText('Опыт ещё не добавлен');
  await expect(page.locator('#profile-languages')).toContainText('Языки пока не указаны');
  await page.getByRole('button',{name:'Редактировать профиль',exact:true}).click();
@@ -22,7 +22,7 @@ try{
  await edit('Редактировать: Навыки');await page.getByLabel('Навыки через запятую').fill('Чтение чертежей, AutoCAD');await save();
  await edit('Добавить / изменить: Достижения и обучение');await page.getByRole('button',{name:'Добавить достижение',exact:true}).click();await page.getByLabel('Название достижения или курса').fill('Учебный кейс');await page.getByLabel('Организатор, год и результат').fill('Командный проект, 2026');await save();
  await edit('Редактировать: Языки');await page.getByRole('button',{name:'Добавить язык',exact:true}).click();await page.getByLabel('Язык',{exact:true}).fill('Русский');await save();
- await edit('Настроить видимость: Контакты и видимость');await page.getByLabel('Email',{exact:true}).fill('anna@example.invalid');await page.getByLabel('Видимость в поиске работодателя').selectOption('hidden');await save();await page.reload();
+ await edit('Редактировать: Контакты');await expect(page.getByLabel('Видимость в поиске работодателя')).toHaveCount(0);await page.getByLabel('Email',{exact:true}).fill('anna@example.invalid');await save();await edit('Настроить видимость: Видимость');await expect(page.getByLabel('Email',{exact:true})).toHaveCount(0);await page.getByLabel('Видимость в поиске работодателя').selectOption('hidden');await save();await page.reload();
  await expect(page.locator('#profile-contacts')).toContainText('anna@example.invalid');await expect(page.locator('#profile-languages')).toContainText('Русский');
  await edit('Редактировать: Что я ищу');await page.getByLabel('Профессиональные интересы').fill('Отменённые изменения');await page.getByRole('button',{name:'Отмена',exact:true}).click();
  await expect(page.locator('#profile-search')).toContainText('Хочу работать с графиками');
@@ -44,5 +44,5 @@ try{
   await page.setViewportSize({width,height:900});await profile();expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
   await page.evaluate(()=>window.scrollTo(0,0));await page.screenshot({path:'../docs/previews/student-profile-'+width+'.png',fullPage:true});
  }
- expect(errors).toEqual([]);console.log('PASS profile: 10 sections, all inline editors, sources, persistence, cancel/dirty/back, resume creation, visibility across roles, long text and 360/390/412/430/1440.');
+ expect(errors).toEqual([]);console.log('PASS profile: 12 sections, separate contacts and visibility, all inline editors, sources, persistence, cancel/dirty/back, resume creation, visibility across roles, long text and 360/390/412/430/1440.');
 }finally{await browser.close()}

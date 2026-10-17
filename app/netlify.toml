@@ -1,0 +1,4 @@
+# Base directory is app (existing Netlify setting). Keep build/publish settings in the UI.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
