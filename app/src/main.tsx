@@ -1,3 +1,4 @@
+import { AIAvailabilityProvider } from './features/AIAvailability';
 import { RoleHome } from './features/RoleHome';
 import { CaseInMark } from './features/CaseInMark';
 import { Avatar } from './features/Avatar';
@@ -20,6 +21,7 @@ import './styles/architecture-animation.css';
 import './styles/workspace.css';
 import './styles/profile.css';
 import './styles/typography.css';
+import './styles/career-actions.css';
 const homes={student:'/student',employer:'/employer',coordinator:'/university',operator:'/operator'};
 const roleNames={student:'Студент',employer:'Работодатель',coordinator:'Координатор вуза',operator:'Оператор'};
 
@@ -51,7 +53,7 @@ function App(){
  <footer className="workspace-footer"><span>Строительная карьера</span><nav aria-label="Информация и помощь"><a href={'#'+homes[persona.role]+'/more'}>Разделы кабинета</a><a href="#/about">О платформе</a><a href="#/help">Помощь</a><a href="#/demo/about">Учебная дата и ограничения →</a></nav></footer></main></div>
  {resetOpen&&<div className="overlay"><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="reset-title" className="card dialog"><h2 id="reset-title">Сбросить демоданные?</h2><p>Все результаты действий, отклики, сообщения, документы и изменения профилей всех тестовых ролей в этом браузере будут удалены. Восстановится исходный учебный набор, и откроется приветственная страница. Данные других сайтов не затрагиваются. Это действие нельзя отменить.</p><div className="actions"><button autoFocus onClick={()=>setResetOpen(false)}>Отмена</button><button className="primary" onClick={restore}>Восстановить исходный набор</button></div></section></div>}</div></>
 }
-createRoot(document.getElementById('root')!).render(<App/>);
+createRoot(document.getElementById('root')!).render(<AIAvailabilityProvider><App/></AIAvailabilityProvider>);
 
 
 

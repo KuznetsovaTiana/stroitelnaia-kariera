@@ -35,5 +35,5 @@ export function ContextNavigation({role,route,expanded=false,state}:{role:Role;r
  const path=route.split('?')[0];
  if(path===homes[role]||path.endsWith('/more')||path==='/student/profile')return null;
  const group=visible.find(([,links])=>links.some(([url])=>path===url||path.startsWith(url+'/')));
- return group?<nav className="context-nav" aria-label={group[0]}>{group[1].map(([url,label])=><a href={'#'+url} key={url} aria-current={path===url||path.startsWith(url+'/')?'page':undefined}>{label}</a>)}</nav>:null;
+ return group?<nav className="context-nav" aria-label={group[0]}>{group[1].map(([url,label])=><a className={url==='/jobs'?'career-nav':undefined} href={'#'+url} key={url} aria-current={path===url||path.startsWith(url+'/')?'page':undefined}>{label}</a>)}</nav>:null;
 }

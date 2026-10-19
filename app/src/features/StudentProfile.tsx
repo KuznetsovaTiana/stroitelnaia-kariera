@@ -1,3 +1,4 @@
+import { CareerActions } from './CareerActions';
 import { useState } from 'react';
 import { createResume, dataFor, saveProfile, saveProfessional } from '../domain/b1';
 import { saveInterests } from '../domain/operations';
@@ -22,7 +23,7 @@ export function StudentProfile({state,commit}:{state:Envelope;commit:(state:Enve
  const action=(section:Exclude<Edit,null>,label='Редактировать')=><button className="profile-link" onClick={()=>edit(section)} aria-label={label+': '+({search:'Что я ищу',experience:'Опыт и практика',skills:'Навыки',achievements:'Достижения и обучение',languages:'Языки',contacts:'Контакты',visibility:'Видимость',about:'О себе',experienceSummary:'Учебный и практический опыт'}[section])}>{label}</button>;
  const editorProps={details,onCancel:finish,save};
  return <section className="student-profile" data-screen="S02"><StudentProfileHeader student={student} details={details} completion={completion} missing={checks.filter(([,filled])=>!filled).map(([label])=>label)} onEdit={()=>edit('search')}/>{message&&<p className="notice" role="status">{message}</p>}{error&&<p className="notice error" role="alert">{error}</p>}
- <ResumeSection student={student} resumes={resumes} onCreate={create}/>
+ <CareerActions showAI={false}/><ResumeSection student={student} resumes={resumes} onCreate={create}/>
  <ProfileDescription state={state} studentId={student.id} details={details} field="about" editing={editing==='about'} onEdit={()=>edit('about')} onClose={finish} save={save}/>
  <JobPreferencesSection student={student} details={details} action={action('search')} editor={editing==='search'&&<SearchEditor student={student} details={details} onCancel={finish} save={(value,profile,interests)=>{const next=saveProfessional(saveInterests(saveProfile(state,profile),interests,data),value);const saved=commit(next);if(saved)setMessage('Условия поиска и интересы сохранены');return saved}}/>}/>
  <ExperienceSection cases={cases} details={details} companies={data.companies} action={action('experience','Добавить / изменить')} editor={editing==='experience'&&<ExperienceEditor {...editorProps}/>}/>

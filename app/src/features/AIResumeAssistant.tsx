@@ -1,3 +1,4 @@
+import { AIDemoNotice } from './AIAvailability';
 import {useEffect,useId,useRef,useState} from 'react';
 import {AI_UNAVAILABLE} from '../../shared/aiContract';
 import type {AIAvailability,AIMessage,AIMode,AIRequest} from '../../shared/aiContract';
@@ -21,17 +22,20 @@ export function AIResumeAssistant({state,studentId,target,initialText='',onApply
   catch(e){setError(controller.signal.aborted?AI_UNAVAILABLE:(e instanceof Error?e.message:AI_UNAVAILABLE))}
   finally{clearTimeout(timer);busy.current=false;setPending(false);request.current=null}
  }
+ const unavailable=availability?.available===false||(!availability&&error===AI_UNAVAILABLE);
  return <div className="ai-assistant card" aria-label="ИИ-помощник студента"><div className="profile-section-heading"><h3>{target==='about'?'Помочь рассказать о себе':'Помочь описать опыт'}</h3><button type="button" onClick={()=>{request.current?.abort();onClose()}} aria-label="Закрыть ИИ-помощника">×</button></div>
- <p className="profile-source">{availability?(availability.mode==='mock'?'Демонстрационный режим · без языковой модели':'GigaChat · ИИ-помощник'):'Проверяем доступность помощника…'}</p>
+ {unavailable?<AIDemoNotice/>:<><p className="profile-source">{availability?(availability.mode==='mock'?'Демонстрационный режим · без языковой модели':'GigaChat · ИИ-помощник'):'Проверяем доступность помощника…'}</p>
  <p className="tiny">По кнопке отправки модель получит ваши сообщения и краткий учебный контекст: программу, курс, дисциплины и навыки. Имя, контакты и оценки не передаются. Не вводите личные данные. История остаётся только в памяти этой страницы.</p>
  <p>Расскажите {target==='about'?'о своих интересах и задачах, которые хотите выполнять':'о реальном учебном проекте или практике и вашем личном вкладе'}. Помощник уточнит детали и предложит текст для проверки.</p>
- {availability&&!availability.available&&<p className="notice" role="status">{AI_UNAVAILABLE}</p>}
+ </>}
+ {!unavailable&&<>
  <div className="ai-dialog" aria-live="polite">{history.map((m,i)=><p key={i} className="prewrap"><strong>{m.role==='user'?'Вы':'Помощник'}:</strong> {m.content}</p>)}</div>
  <label htmlFor={id}>Ваше сообщение</label><textarea ref={input} id={id} rows={4} maxLength={2000} value={message} disabled={pending} onChange={e=>setMessage(e.target.value)}/>
- <div className="actions"><button type="button" disabled={pending||!availability?.available||!message.trim()} onClick={()=>void send()}>{pending?'Готовим ответ…':'Отправить'}</button>{history.length>0&&<button type="button" disabled={pending} onClick={()=>{setHistory([]);setError('');input.current?.focus()}}>Новый диалог</button>}</div>
+ <div className="actions"><button className="primary" type="button" disabled={pending||!availability?.available||!message.trim()} onClick={()=>void send()}>{pending?'Готовим ответ…':'Отправить'}</button>{history.length>0&&<button type="button" disabled={pending} onClick={()=>{setHistory([]);setError('');input.current?.focus()}}>Новый диалог</button>}</div>
  {error&&<p className="notice error" role="alert">{error}</p>}
  {!preview&&initialText.trim()&&<button type="button" disabled={pending||!availability?.available} onClick={()=>void send(true)}>Улучшить мой текст</button>}
  {preview&&<section className="ai-preview"><h3>Предложенный текст</h3><p className="tiny">Проверьте каждую формулировку. Это информация от студента, а не подтверждение университета. Текст можно изменить перед сохранением.</p><label htmlFor={id+'-preview'}>Изменить текст</label><textarea id={id+'-preview'} rows={8} maxLength={3000} value={preview} disabled={pending} onChange={e=>setPreview(e.target.value)}/><div className="actions"><button type="button" className="primary" disabled={pending||!preview.trim()} onClick={()=>{try{if(onApply(preview,mode)){document.dispatchEvent(new Event('career:discard-draft'));onClose()}else setError('Сохранение не подтверждено. Текст остаётся здесь для повторной попытки.')}catch(e){setError((e as Error).message)}}}>Добавить в профиль</button><button type="button" disabled={pending} onClick={()=>input.current?.focus()}>Продолжить диалог</button><button type="button" disabled={pending||!availability?.available} onClick={()=>void send(true)}>Улучшить формулировку</button></div></section>}
+ </>}
  </div>;
 }
 
