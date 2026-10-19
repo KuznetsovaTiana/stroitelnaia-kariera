@@ -10,8 +10,6 @@
 .ai-notice-icon{display:grid;place-items:center;width:22px;height:22px;flex:0 0 22px;border:1px solid #68645b;border-radius:50%;font-size:14px;font-weight:650;line-height:1}
 .ai-demo-notice strong{display:block;font-size:var(--text-sm);line-height:1.5;font-weight:650}
 .ai-demo-notice p{margin:6px 0 0;font-size:var(--text-sm);line-height:1.55;color:#514d42}
-.context-nav a.career-nav{font-weight:650;border:1px solid #948772;border-radius:5px;background:#eae5da;padding-inline:14px}
-.context-nav a.career-nav[aria-current]{background:#292824;color:var(--paper);border-color:#292824}
 .profile-inline-actions .ai-entry{margin-block:4px}
 .career-result-link{display:inline-flex;align-items:center;gap:12px;min-height:44px;margin-top:8px;padding-bottom:3px;border-bottom:2px solid #948772;font-weight:650;font-size:var(--text-sm)}
 @media(max-width:650px){

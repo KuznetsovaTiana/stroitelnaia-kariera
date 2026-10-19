@@ -14,9 +14,10 @@ try {
     await expect(page.locator('.career-actions')).toHaveCount(0);
     await expect(page.locator('.home-next .button')).toBeVisible();
     await page.goto(base + '#/practices');
-    await page.locator('.career-nav').click();
+    await page.locator('.context-nav a[href="#/jobs"]').click();
     await expect(page).toHaveURL(/#\/jobs$/);
-    await expect(page.locator('.career-nav')).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('.context-nav a[href="#/jobs"]')).toHaveAttribute('aria-current', 'page');
+    await expect(page.locator('.context-nav a[aria-current]')).toHaveCount(1);
     await page.locator('.career-result-link').first().click();
     await expect(page).toHaveURL(/#\/jobs\/[^?]+\?back=/);
     await page.goto(base + '#/student');

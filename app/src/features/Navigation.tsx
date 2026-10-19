@@ -202,7 +202,6 @@ export function ContextNavigation({ role, route, expanded = false, state }: {
   return group
     ? <nav className="context-nav" aria-label={group[0]}>
       {group[1].map(([url, label]) => <a
-        className={url === '/jobs' ? 'career-nav' : undefined}
         href={'#' + url}
         key={url}
         aria-current={path === url || path.startsWith(url + '/') ? 'page' : undefined}
