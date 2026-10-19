@@ -1,5 +1,5 @@
 import { ArchitectureBackground } from './ArchitectureBackground';
-import { CaseInMark } from './CaseInMark';
+import { PartnerMarks } from './PartnerMarks';
 import { useEffect, useRef, useState } from 'react';
 import { projectContext } from '../data/projectContext';
 import { officialName } from '../domain/personName';
@@ -88,7 +88,7 @@ export function Welcome({ state, selection, start, resumeHref }: {
         <span>Строительная<br />карьера</span>
       </a>
       <div className="entry-header-context">
-        <CaseInMark />
+        <PartnerMarks />
         <span className="demobadge">Демонстрационная версия</span>
       </div>
     </header>

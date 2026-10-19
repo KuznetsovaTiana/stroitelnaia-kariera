@@ -1,6 +1,6 @@
 import { AIAvailabilityProvider } from './features/AIAvailability';
 import { RoleHome } from './features/RoleHome';
-import { CaseInMark } from './features/CaseInMark';
+import { PartnerMarks } from './features/PartnerMarks';
 import { Avatar } from './features/Avatar';
 import { teamRule } from './domain/access';
 import { Welcome } from './features/Welcome';
@@ -22,6 +22,7 @@ import './styles/workspace.css';
 import './styles/profile.css';
 import './styles/typography.css';
 import './styles/career-actions.css';
+import './styles/partner-marks.css';
 const homes = {
   student: '/student',
   employer: '/employer',
@@ -301,7 +302,7 @@ function App() {
                 <img src="./brand/site-logo.svg" alt="" width="352" height="200" aria-hidden="true" />
               </span>
             </a>
-            <CaseInMark />
+            <PartnerMarks />
             <span className="workspace-demo-label">Демонстрация</span>
             <a
               className="notification-link"

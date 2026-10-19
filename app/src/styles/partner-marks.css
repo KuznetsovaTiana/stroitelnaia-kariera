@@ -1,0 +1,71 @@
+.partner-marks {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex: 0 0 auto;
+}
+
+.vector-development-mark {
+  position: relative;
+  display: block;
+  width: 40px;
+  height: 34px;
+  overflow: hidden;
+  flex: 0 0 auto;
+}
+
+/* Show only the graphic symbol from the supplied lockup, without its lettering. */
+.vector-development-mark img {
+  position: absolute;
+  top: -8px;
+  left: -5px;
+  display: block;
+  width: 72px;
+  height: auto;
+  clip-path: polygon(0 0, 64% 0, 64% 51%, 50% 51%, 50% 100%, 0 100%);
+}
+
+@media (max-width: 768px) {
+  .partner-marks { gap: 12px; }
+  .vector-development-mark { width: 32px; height: 26px; }
+  .vector-development-mark img { width: 56px; top: -6px; left: -4px; }
+
+  .workspace > header .header-context {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr) 44px;
+    gap: 0 8px;
+    align-items: center;
+  }
+  .workspace > header .header-context .mobile-brand { grid-column: 1; grid-row: 1 / 3; margin: 0; }
+  .workspace > header .header-context .partner-marks { grid-column: 2; grid-row: 1; }
+  .workspace > header .header-context .case-in-mark { width: 64px; }
+  .workspace > header .header-context .workspace-demo-label { grid-column: 2; grid-row: 2; justify-self: center; margin: 0 0 6px; }
+  .workspace > header .header-context .notification-link { grid-column: 3; grid-row: 1 / 3; margin: 0; }
+}
+
+@media (max-width: 700px) {
+  .welcome-page .entry-header,
+  .role-selection-page .entry-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 12px;
+    padding: 10px 20px 8px;
+  }
+  .entry-header > .brand { grid-column: 1; grid-row: 1; }
+  .welcome-page .entry-header-context,
+  .role-selection-page .entry-header-context { display: contents; }
+  .entry-header-context .partner-marks { grid-column: 1 / -1; grid-row: 2; }
+  .entry-header-context .demobadge { grid-column: 2; grid-row: 1; max-width: 90px; text-align: right; }
+  .entry-header-context .case-in-mark { width: 72px; }
+}
+
+@media (max-height: 500px) and (orientation: landscape) {
+  .welcome-page .entry-header,
+  .role-selection-page .entry-header { display: flex; }
+  .welcome-page .entry-header-context,
+  .role-selection-page .entry-header-context { display: flex; max-width: none; gap: 12px; }
+  .entry-header-context .demobadge { max-width: none; }
+  .vector-development-mark { width: 36px; height: 30px; }
+  .vector-development-mark img { width: 64px; top: -7px; left: -5px; }
+}
