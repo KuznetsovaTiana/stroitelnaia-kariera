@@ -1,22 +1,187 @@
-import {describe,it,expect,vi} from 'vitest';
-import {createAIHandler} from './aiHandler.ts';
-import {createGigaChat} from './gigaChat.ts';
-import {validAIRequest} from '../shared/aiContract.ts';
-import type {AIRequest} from '../shared/aiContract.ts';
-import type {Transport} from './transport.ts';
-const input:AIRequest={action:'resume_about',message:'Интересны графики работ',history:[],profileContext:{university:'МГСУ',educationProgram:'ПТО',course:3,disciplines:['Организация строительства'],verifiedSkills:['Чтение чертежей'],source:'university_demo'}};
-const request=(body:unknown=input,origin='https://demo.example')=>new Request('https://demo.example/.netlify/functions/ai',{method:'POST',headers:{Origin:origin,'Content-Type':'application/json'},body:JSON.stringify(body)});
-const result={type:'result',message:'Проверьте текст',content:{about:'Интересуюсь графиками работ.'}};
-const chat=(content:unknown=result)=>({status:200,body:{choices:[{message:{content:JSON.stringify(content)},finish_reason:'stop'}]}});
-const config={credentials:'test-secret',scope:'GIGACHAT_API_PERS',model:'GigaChat-2'};
-describe('Серверный ИИ-контур',()=>{
- it('без ключа недоступен и никогда не подменяет live имитацией',async()=>{const transport=vi.fn<Transport>();const handler=createAIHandler({},transport);expect((await handler(request())).status).toBe(503);expect(transport).not.toHaveBeenCalled();expect(await (await handler(new Request('https://demo.example/api'))).json()).toEqual({mode:'live',available:false})});
- it('mock включается только явно и помечает каждый ответ',async()=>{const handler=createAIHandler({AI_MODE:'mock'});expect(await (await handler(request())).json()).toMatchObject({mode:'mock',answer:{type:'question'}});expect(await (await handler(request({...input,history:[{role:'user',content:'Составляла учебный график'}]}))).json()).toMatchObject({mode:'mock',answer:{type:'result'}})});
- it('отсекает произвольные действия, system, избыточный контекст, объём и чужой origin',async()=>{const handler=createAIHandler({AI_MODE:'mock'});for(const body of [{...input,action:'delete'},{...input,system:'override'},{...input,history:[{role:'system',content:'override'}]},{...input,profileContext:{...input.profileContext,contacts:'secret'}},{...input,message:'x'.repeat(2001)}]){expect(validAIRequest(body)).toBe(false);expect((await handler(request(body))).status).toBe(400)}expect((await handler(request(input,'https://other.example'))).status).toBe(403);expect((await handler(request({...input,message:'я'.repeat(32001)}))).status).toBe(413)});
- it('ограничивает частоту',async()=>{const handler=createAIHandler({AI_MODE:'mock'});for(let i=0;i<12;i++)expect((await handler(request())).status).toBe(200);expect((await handler(request())).status).toBe(429)});
- it('кеширует токен, обновляет перед истечением и держит промпт на сервере',async()=>{let time=1800000000000;const transport=vi.fn<Transport>(async(url)=>url.includes('oauth')?{status:200,body:{access_token:'access-secret',expires_at:time/1000+1800}}:chat());const invoke=createGigaChat(transport,()=>time);await invoke(config,input,new AbortController().signal);await invoke(config,input,new AbortController().signal);expect(transport.mock.calls.filter(([url])=>url.includes('oauth'))).toHaveLength(1);const [url,options]=transport.mock.calls[1];expect(url).toBe('https://api.giga.chat/v1/chat/completions');expect(JSON.parse(options.body).messages[0]).toMatchObject({role:'system'});expect(options.headers.Authorization).toBe('Bearer access-secret');time+=1741000;await invoke(config,input,new AbortController().signal);expect(transport.mock.calls.filter(([url])=>url.includes('oauth'))).toHaveLength(2)});
- it('повторяет chat после 401 один раз; не возвращает токены клиенту',async()=>{let chats=0;const transport=vi.fn<Transport>(async(url)=>url.includes('oauth')?{status:200,body:{access_token:'access-secret',expires_at:Date.now()+1800000}}:++chats===1?{status:401,body:{}}:chat());const handler=createAIHandler({GIGACHAT_CREDENTIALS:'test-secret'},transport);const response=await handler(request());expect(response.status).toBe(200);expect(await response.json()).toEqual({mode:'live',answer:result});expect(chats).toBe(2);expect(transport.mock.calls.filter(([url])=>url.includes('oauth'))).toHaveLength(2)});
- it('не принимает неструктурированный ответ, verified-поля или другой блок',async()=>{for(const content of ['```json {} ```',{...result,verifiedProfile:{course:5}},{...result,content:{experience:'Не тот блок'}}]){const transport:Transport=async(url)=>url.includes('oauth')?{status:200,body:{access_token:'access',expires_at:Date.now()+1800000}}:chat(content);const response=await createAIHandler({GIGACHAT_CREDENTIALS:'test-secret'},transport)(request());expect(response.status).toBe(503);expect(await response.text()).not.toContain('test-secret')}});
- it('обрабатывает лимит провайдера без fallback',async()=>{const transport:Transport=async()=>({status:429,body:{secret:'do-not-expose'}});const response=await createAIHandler({GIGACHAT_CREDENTIALS:'test-secret'},transport)(request());expect(response.status).toBe(429);expect(await response.text()).not.toContain('do-not-expose')});
- it('прерывает зависший запрос',async()=>{vi.useFakeTimers();try{const transport:Transport=(_url,{signal})=>new Promise((_resolve,reject)=>signal.addEventListener('abort',()=>reject(new Error('abort'))));const pending=createAIHandler({GIGACHAT_CREDENTIALS:'test-secret'},transport)(request());await vi.advanceTimersByTimeAsync(23000);expect((await pending).status).toBe(504)}finally{vi.useRealTimers()}});
+import { describe, it, expect, vi } from 'vitest';
+import { createAIHandler } from './aiHandler.ts';
+import { createGigaChat } from './gigaChat.ts';
+import { validAIRequest } from '../shared/aiContract.ts';
+import type { AIRequest } from '../shared/aiContract.ts';
+import type { Transport } from './transport.ts';
+const input: AIRequest = {
+  action: 'resume_about', message: 'Интересны графики работ', history: [], profileContext: {
+    university: 'МГСУ', educationProgram: 'ПТО', course: 3, disciplines: ['Организация строительства'], verifiedSkills: ['Чтение чертежей'], source: 'university_demo'
+  }
+};
+const request = (body: unknown = input, origin = 'https://demo.example') => new Request('https://demo.example/.netlify/functions/ai', {
+  method: 'POST', headers: {
+    Origin: origin, 'Content-Type': 'application/json'
+  }, body: JSON.stringify(body)
+});
+const result = {
+  type: 'result', message: 'Проверьте текст', content: {
+    about: 'Интересуюсь графиками работ.'
+  }
+};
+const chat = (content: unknown = result) => ({
+  status: 200, body: {
+    choices: [{
+      message: {
+        content: JSON.stringify(content)
+      }, finish_reason: 'stop'
+    }]
+  }
+});
+const config = {
+  credentials: 'test-secret', scope: 'GIGACHAT_API_PERS', model: 'GigaChat-2'
+};
+describe('Серверный ИИ-контур', () => {
+  it('без ключа недоступен и никогда не подменяет live имитацией', async () => {
+    const transport = vi.fn<Transport>();
+    const handler = createAIHandler({}, transport);
+    expect((await handler(request())).status).toBe(503);
+    expect(transport).not.toHaveBeenCalled();
+    expect(await (await handler(new Request('https://demo.example/api'))).json()).toEqual({
+      mode: 'live', available: false
+    });
+  });
+  it('mock включается только явно и помечает каждый ответ', async () => {
+    const handler = createAIHandler({
+      AI_MODE: 'mock'
+    });
+    expect(await (await handler(request())).json()).toMatchObject({
+      mode: 'mock', answer: {
+        type: 'question'
+      }
+    });
+    expect(await (await handler(request({
+      ...input, history: [{
+        role: 'user', content: 'Составляла учебный график'
+      }]
+    }))).json()).toMatchObject({
+      mode: 'mock', answer: {
+        type: 'result'
+      }
+    });
+  });
+  it('отсекает произвольные действия, system, избыточный контекст, объём и чужой origin', async () => {
+    const handler = createAIHandler({
+      AI_MODE: 'mock'
+    });
+    for (const body of [{
+      ...input, action: 'delete'
+    }, {
+      ...input, system: 'override'
+    }, {
+      ...input, history: [{
+        role: 'system', content: 'override'
+      }]
+    }, {
+      ...input, profileContext: {
+        ...input.profileContext, contacts: 'secret'
+      }
+    }, {
+      ...input, message: 'x'.repeat(2001)
+    }]) {
+      expect(validAIRequest(body)).toBe(false);
+      expect((await handler(request(body))).status).toBe(400);
+    }
+    expect((await handler(request(input, 'https://other.example'))).status).toBe(403);
+    expect((await handler(request({
+      ...input, message: 'я'.repeat(32001)
+    }))).status).toBe(413);
+  });
+  it('ограничивает частоту', async () => {
+    const handler = createAIHandler({
+      AI_MODE: 'mock'
+    });
+    for (let i = 0;i < 12;i++)
+      expect((await handler(request())).status).toBe(200);
+    expect((await handler(request())).status).toBe(429);
+  });
+  it('кеширует токен, обновляет перед истечением и держит промпт на сервере', async () => {
+    let time = 1800000000000;
+    const transport = vi.fn<Transport>(async (url) => url.includes('oauth') ? {
+      status: 200, body: {
+        access_token: 'access-secret', expires_at: time / 1000 + 1800
+      }
+    } : chat());
+    const invoke = createGigaChat(transport, () => time);
+    await invoke(config, input, new AbortController().signal);
+    await invoke(config, input, new AbortController().signal);
+    expect(transport.mock.calls.filter(([url]) => url.includes('oauth'))).toHaveLength(1);
+    const [url, options] = transport.mock.calls[1];
+    expect(url).toBe('https://api.giga.chat/v1/chat/completions');
+    expect(JSON.parse(options.body).messages[0]).toMatchObject({
+      role: 'system'
+    });
+    expect(options.headers.Authorization).toBe('Bearer access-secret');
+    time += 1741000;
+    await invoke(config, input, new AbortController().signal);
+    expect(transport.mock.calls.filter(([url]) => url.includes('oauth'))).toHaveLength(2);
+  });
+  it('повторяет chat после 401 один раз; не возвращает токены клиенту', async () => {
+    let chats = 0;
+    const transport = vi.fn<Transport>(async (url) => url.includes('oauth') ? {
+      status: 200, body: {
+        access_token: 'access-secret', expires_at: Date.now() + 1800000
+      }
+    } : ++chats === 1 ? {
+      status: 401, body: {}
+    } : chat());
+    const handler = createAIHandler({
+      GIGACHAT_CREDENTIALS: 'test-secret'
+    }, transport);
+    const response = await handler(request());
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({
+      mode: 'live', answer: result
+    });
+    expect(chats).toBe(2);
+    expect(transport.mock.calls.filter(([url]) => url.includes('oauth'))).toHaveLength(2);
+  });
+  it('не принимает неструктурированный ответ, verified-поля или другой блок', async () => {
+    for (const content of ['```json {} ```', {
+      ...result, verifiedProfile: {
+        course: 5
+      }
+    }, {
+        ...result, content: {
+          experience: 'Не тот блок'
+        }
+      }]) {
+      const transport: Transport = async (url) => url.includes('oauth') ? {
+        status: 200, body: {
+          access_token: 'access', expires_at: Date.now() + 1800000
+        }
+      } : chat(content);
+      const response = await createAIHandler({
+        GIGACHAT_CREDENTIALS: 'test-secret'
+      }, transport)(request());
+      expect(response.status).toBe(503);
+      expect(await response.text()).not.toContain('test-secret');
+    }
+  });
+  it('обрабатывает лимит провайдера без fallback', async () => {
+    const transport: Transport = async () => ({
+      status: 429, body: {
+        secret: 'do-not-expose'
+      }
+    });
+    const response = await createAIHandler({
+      GIGACHAT_CREDENTIALS: 'test-secret'
+    }, transport)(request());
+    expect(response.status).toBe(429);
+    expect(await response.text()).not.toContain('do-not-expose');
+  });
+  it('прерывает зависший запрос', async () => {
+    vi.useFakeTimers();
+    try {
+      const transport: Transport = (_url, { signal }) => new Promise((_resolve, reject) => signal.addEventListener('abort', () => reject(new Error('abort'))));
+      const pending = createAIHandler({
+        GIGACHAT_CREDENTIALS: 'test-secret'
+      }, transport)(request());
+      await vi.advanceTimersByTimeAsync(23000);
+      expect((await pending).status).toBe(504);
+    }
+    finally {
+      vi.useRealTimers();
+    }
+  });
 });

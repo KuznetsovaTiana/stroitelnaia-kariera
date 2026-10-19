@@ -3,14 +3,31 @@ import type { Envelope } from '../domain/types';
 import type { Education, Project } from '../domain/b1-types';
 import type { AIContext } from '../../shared/aiContract';
 export interface StudentVerifiedProfile {
-  studentId: string; university: string; educationProgram: string; specialization: string; course: number;
-  academicPerformance: { discipline: string; result: string }[];
-  disciplines: string[]; additionalDisciplines: string[]; verifiedSkills: string[];
-  achievements: string[]; verifiedProjects: Project[]; source: 'university_demo'; sourceDate: string; version: number;
+  studentId: string;
+  university: string;
+  educationProgram: string;
+  specialization: string;
+  course: number;
+  academicPerformance: {
+    discipline: string;
+    result: string;
+  }[];
+  disciplines: string[];
+  additionalDisciplines: string[];
+  verifiedSkills: string[];
+  achievements: string[];
+  verifiedProjects: Project[];
+  source: 'university_demo';
+  sourceDate: string;
+  version: number;
 }
-export interface UniversityDataProvider { getVerifiedProfile(studentId: string): Promise<StudentVerifiedProfile | undefined> }
+export interface UniversityDataProvider {
+  getVerifiedProfile(studentId: string): Promise<StudentVerifiedProfile | undefined>;
+}
 function normalize(state: Envelope, studentId: string): StudentVerifiedProfile | undefined {
-  const data = dataFor(state), student = data.students.find(candidateStudent => candidateStudent.id === studentId), education: Education | undefined = data.education.find(candidateEducation => candidateEducation.studentId === studentId);
+  const data = dataFor(state);
+  const student = data.students.find(candidateStudent => candidateStudent.id === studentId);
+  const education: Education | undefined = data.education.find(candidateEducation => candidateEducation.studentId === studentId);
 
   if (!student || !education) return undefined;
 
@@ -27,7 +44,8 @@ function normalize(state: Envelope, studentId: string): StudentVerifiedProfile |
     verifiedSkills: [...education.skills],
     achievements: [],
 
-    verifiedProjects: data.projects.filter(candidateProject => candidateProject.studentId === studentId && candidateProject.source === 'university_demo').map(candidateProject => structuredClone(candidateProject)),
+    verifiedProjects: data.projects.filter(candidateProject => candidateProject.studentId === studentId && candidateProject.source === 'university_demo')
+      .map(candidateProject => structuredClone(candidateProject)),
     source: 'university_demo',
     sourceDate: education.sourceDate,
     version: education.version
@@ -36,9 +54,9 @@ function normalize(state: Envelope, studentId: string): StudentVerifiedProfile |
 export function mockUniversityDataProvider(state: Envelope): UniversityDataProvider {
   return {
     async getVerifiedProfile(id) {
-      return normalize(state, id)
+      return normalize(state, id);
     }
-  }
+  };
 }
 /** Synchronous selector for the existing local demo; shares the exact provider normalization. */
 export const getVerifiedProfile = normalize;

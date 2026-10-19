@@ -1,102 +1,208 @@
 import { chromium } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
-const browser=await chromium.launch({channel:'msedge',headless:true});
-const context=await browser.newContext({viewport:{width:1440,height:1100}}),page=await context.newPage();
-const errors=[];page.on('pageerror',e=>errors.push(e.message));page.on('dialog',d=>d.accept());
-const assert=(v,m)=>{if(!v)throw new Error(m)};
-const base=process.env.DEMO_BASE_URL??'http://127.0.0.1:4187/';
-const role=async id=>{await page.goto(base+'#/demo?role='+(id==='persona_anna'?'student':id.startsWith('coordinator')?'coordinator':id.startsWith('operator')?'operator':'employer'));await page.getByLabel('Тестовый профиль').selectOption(id);await page.getByRole('button',{name:/Продолжить как/}).click()};
-const go=async route=>{await page.goto(base+'#'+route);if(await page.locator('.entry-page').count()){await role('persona_anna');if(route!=='/')await page.goto(base+'#'+route)}await page.locator('main').waitFor()};
-const stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));
-try{
- await go('/');
- await page.getByRole('link',{name:'Найти практику',exact:false}).last().click();
- await page.getByLabel('Учебная траектория',{exact:true}).selectOption('ПТО');
- await page.getByLabel('Регион',{exact:true}).selectOption('Москва');
- await page.getByLabel('Доступен с').fill('2026-11-02');
- await page.getByLabel('Доступен до').fill('2026-11-27');
- await page.getByLabel('Сортировка').selectOption('matching');
- const filtered=await page.evaluate(()=>location.hash);
- await page.getByRole('button',{name:'Сохранить поиск',exact:true}).click();
- await page.getByRole('link',{name:'Практика в отделе ПТО →',exact:true}).click();
- assert(await page.getByRole('heading',{name:'Высокое соответствие указанным критериям'}).isVisible(),'AC08 full matching');
- await page.getByRole('link',{name:'Вернуться к выдаче',exact:false}).click();
- assert(await page.evaluate(()=>location.hash)===filtered,'AC02 return filters');
- await page.reload();assert(await page.getByLabel('Учебная траектория',{exact:true}).inputValue()==='ПТО','filters reload');
- await page.getByRole('link',{name:'Практика в отделе ПТО →',exact:true}).click();
- await page.getByRole('button',{name:'В избранное',exact:true}).click();
- await page.getByRole('button',{name:'Отправить отклик',exact:true}).click();
- assert(await page.getByRole('alert').innerText().then(t=>t.includes('Подтвердите')),'consent error');
- await page.getByRole('checkbox',{name:'Подтверждаю передачу',exact:false}).check();
- await page.getByRole('button',{name:'Отправить отклик',exact:true}).click();
- await page.getByRole('link',{name:'Отклик уже отправлен',exact:false}).waitFor();
- let s=await stored();const app=s.changes.b1.applications[0],snapshot=JSON.stringify(app.resumeSnapshot),educationSnapshot=JSON.stringify(app.educationSnapshot);
- assert(s.changes.b1.applications.length===1,'one application');
- await page.reload();assert((await stored()).changes.b1.applications.length===1,'no duplicate reload');
- await role('employer_sever_demo');
- await go('/employer/applications/'+app.id);
- await page.getByRole('heading',{name:'Отправленное резюме',exact:false}).waitFor();
- await go('/employer/students/student_anna_demo?offer=offer_pto_demo');
- assert(await page.getByRole('heading',{name:'Высокое соответствие указанным критериям'}).isVisible(),'same matching employer');
- assert(!(await page.locator('main').innerText()).includes('Миронова'),'anonymized employer');
- await role('persona_anna');
- await go('/student/education');
- await page.getByLabel('Поле учебной записи').selectOption('disciplines.0.result');
- await page.getByLabel('Предложенное значение').fill('Отлично');
- await page.getByLabel('Причина исправления').fill('Учебный пример: нужно уточнить результат');
- await page.getByRole('button',{name:'Отправить запрос',exact:true}).click();
- await role('coordinator_mgsu_demo');
- await go('/university/students/student_anna_demo');
- await page.getByRole('button',{name:'Принять исправление'}).click();
- assert(await page.getByRole('alert').innerText().then(t=>t.includes('Пояснение')),'coordinator reason required');
- await page.getByLabel('Пояснение решения').fill('Учебные сведения проверены, результат исправлен');
- await page.getByRole('button',{name:'Принять исправление'}).click();
- await page.reload();
- await role('persona_anna');
- await go('/student/education/history');
- assert(await page.locator('main').innerText().then(t=>t.includes('Зачёт → Отлично')),'SC04 old/new history');
- s=await stored();assert(s.changes.b1.education.education_0.version===2,'education version');assert(JSON.stringify(s.changes.b1.applications[0].educationSnapshot)===educationSnapshot,'AC06 immutable education snapshot');
- await go('/notifications');assert(await page.locator('main').innerText().then(t=>t.includes('Исправление образовательных сведений принято')),'student notified');
- await go('/student/projects/new');
- await page.getByLabel('Название проекта').fill('Учебный график корпуса');
- await page.getByLabel('Учебная задача',{exact:true}).fill('Распланировать работы на объекте');
- await page.getByLabel('Личный вклад',{exact:true}).fill('Построила график производства работ');
- await page.getByLabel('Учебный результат',{exact:true}).fill('Подготовила пояснительную записку');
- await page.getByLabel('Инструменты через запятую').fill('Таблицы, График работ');
- await page.getByRole('button',{name:'Сохранить проект'}).click();
- await go('/student/profile');assert(await page.getByRole('heading',{name:'Учебный график корпуса',exact:false}).isVisible(),'project persisted');
- // Exercise the new assistant contract without an external model in this browser regression.
- await page.route('**/.netlify/functions/ai',async route=>{const req=route.request();const payload=req.method()==='POST'?JSON.parse(req.postData()):null;await route.fulfill({json:payload?{mode:'mock',answer:payload.history.length?{type:'result',message:'Проверьте текст',content:{about:'Построила график работ в учебном проекте.'}}:{type:'question',message:'Что сделали лично вы?'}}:{mode:'mock',available:true}})});
- await go('/student/resumes/resume_0/assistant');
- await page.getByLabel('Ваше сообщение',{exact:true}).fill('Хочу в ПТО');await page.getByRole('button',{name:'Отправить',exact:true}).click();
- await page.getByText('Что сделали лично вы?',{exact:false}).waitFor();
- await page.getByLabel('Ваше сообщение',{exact:true}).fill('Построила график работ');await page.getByRole('button',{name:'Отправить',exact:true}).click();
- await page.getByLabel('Изменить текст',{exact:true}).waitFor();
- assert((await stored()).changes.b1?.resumes?.resume_0===undefined,'no automatic resume write');
- await page.getByRole('button',{name:'Добавить в профиль',exact:true}).click();
- await go('/student/resumes/resume_0/edit');
- assert(await page.getByLabel('Самоописание',{exact:true}).inputValue().then(t=>t.includes('Построила график работ')),'assistant accepted');
- await page.getByLabel('Самоописание',{exact:true}).fill('Отредактировано вручную: учебный график');
- await page.getByRole('button',{name:'Сохранить резюме',exact:true}).click();
- await page.reload();assert(await page.getByLabel('Самоописание',{exact:true}).inputValue().then(t=>t.includes('вручную')),'manual save');
- s=await stored();assert(JSON.stringify(s.changes.b1.applications[0].resumeSnapshot)===snapshot,'old resume snapshot');
- await go('/student/resumes/resume_0/assistant');await page.reload();
- assert(await page.getByLabel('Ваше сообщение',{exact:true}).inputValue()==='','history not persisted');
- await page.getByRole('link',{name:'← Ручной редактор резюме',exact:true}).click();
- assert(await page.getByLabel('Самоописание',{exact:true}).inputValue().then(t=>t.includes('вручную')),'cancel preserved');
- await go('/student/saved');assert(await page.getByRole('link',{name:'Практика в отделе ПТО',exact:false}).isVisible(),'favorites persisted');
- await go('/practices?q=неизвестное');assert(await page.getByRole('heading',{name:'Ничего не найдено'}).isVisible(),'empty search');
- await page.getByRole('button',{name:'Показать все'}).click();
- await go('/jobs?kind=internship');assert(await page.getByRole('heading',{name:'Работа и стажировки'}).isVisible(),'jobs');
- await mkdir('../docs/previews',{recursive:true});
- await go('/practices?program=ПТО&sort=matching');await page.screenshot({path:'../docs/previews/p02-desktop.png',fullPage:true});
- await page.setViewportSize({width:360,height:800});
- for(const route of ['/practices?program=ПТО','/practices/offer_pto_demo','/student/education','/student/resumes/resume_0/assistant','/student/profile']){await go(route);assert(await page.evaluate(()=>document.documentElement.scrollWidth<=360),'360 overflow '+route)}
- await go('/practices?program=ПТО');await page.screenshot({path:'../docs/previews/p02-mobile.png',fullPage:true});
- assert(errors.length===0,errors.join('\n'));
- console.log('PASS B1: SC01 through submitted/employer read, SC03, SC04, AC02/06/07/08, snapshots, storage, 360px; JSON bytes:',new TextEncoder().encode(JSON.stringify(await stored())).length);
-}finally{await browser.close()}
-
-
-
-
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const context = await browser.newContext({ viewport: { width: 1440, height: 1100 } });
+const page = await context.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+page.on('dialog', d => d.accept());
+const assert = (v, m) => {
+  if (!v) throw new Error(m);
+};
+const base = process.env.DEMO_BASE_URL ?? 'http://127.0.0.1:4187/';
+const role = async id => {
+  await page.goto(base + '#/demo?role=' + (id === 'persona_anna'
+    ? 'student'
+    : id.startsWith('coordinator') ? 'coordinator' : id.startsWith('operator') ? 'operator' : 'employer'));
+  await page.getByLabel('Тестовый профиль').selectOption(id);
+  await page.getByRole('button', { name: /Продолжить как/ }).click();
+};
+const go = async route => {
+  await page.goto(base + '#' + route);
+  if (await page.locator('.entry-page').count()) {
+    await role('persona_anna');
+    if (route !== '/') await page.goto(base + '#' + route);
+  }
+  await page.locator('main').waitFor();
+};
+const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));
+try {
+  await go('/');
+  await page.getByRole('link', { name: 'Найти практику', exact: false }).last().click();
+  await page.getByLabel('Учебная траектория', { exact: true }).selectOption('ПТО');
+  await page.getByLabel('Регион', { exact: true }).selectOption('Москва');
+  await page.getByLabel('Доступен с').fill('2026-11-02');
+  await page.getByLabel('Доступен до').fill('2026-11-27');
+  await page.getByLabel('Сортировка').selectOption('matching');
+  const filtered = await page.evaluate(() => location.hash);
+  await page.getByRole('button', { name: 'Сохранить поиск', exact: true }).click();
+  await page.getByRole('link', { name: 'Практика в отделе ПТО →', exact: true }).click();
+  assert(
+    await page.getByRole('heading', { name: 'Высокое соответствие указанным критериям' }).isVisible(),
+    'AC08 full matching'
+  );
+  await page.getByRole('link', { name: 'Вернуться к выдаче', exact: false }).click();
+  assert(await page.evaluate(() => location.hash) === filtered, 'AC02 return filters');
+  await page.reload();
+  assert(
+    await page.getByLabel('Учебная траектория', { exact: true }).inputValue() === 'ПТО',
+    'filters reload'
+  );
+  await page.getByRole('link', { name: 'Практика в отделе ПТО →', exact: true }).click();
+  await page.getByRole('button', { name: 'В избранное', exact: true }).click();
+  await page.getByRole('button', { name: 'Отправить отклик', exact: true }).click();
+  assert(await page.getByRole('alert').innerText().then(t => t.includes('Подтвердите')), 'consent error');
+  await page.getByRole('checkbox', { name: 'Подтверждаю передачу', exact: false }).check();
+  await page.getByRole('button', { name: 'Отправить отклик', exact: true }).click();
+  await page.getByRole('link', { name: 'Отклик уже отправлен', exact: false }).waitFor();
+  let s = await stored();
+  const app = s.changes.b1.applications[0];
+  const snapshot = JSON.stringify(app.resumeSnapshot);
+  const educationSnapshot = JSON.stringify(app.educationSnapshot);
+  assert(s.changes.b1.applications.length === 1, 'one application');
+  await page.reload();
+  assert((await stored()).changes.b1.applications.length === 1, 'no duplicate reload');
+  await role('employer_sever_demo');
+  await go('/employer/applications/' + app.id);
+  await page.getByRole('heading', { name: 'Отправленное резюме', exact: false }).waitFor();
+  await go('/employer/students/student_anna_demo?offer=offer_pto_demo');
+  assert(
+    await page.getByRole('heading', { name: 'Высокое соответствие указанным критериям' }).isVisible(),
+    'same matching employer'
+  );
+  assert(!(await page.locator('main').innerText()).includes('Миронова'), 'anonymized employer');
+  await role('persona_anna');
+  await go('/student/education');
+  await page.getByLabel('Поле учебной записи').selectOption('disciplines.0.result');
+  await page.getByLabel('Предложенное значение').fill('Отлично');
+  await page.getByLabel('Причина исправления').fill('Учебный пример: нужно уточнить результат');
+  await page.getByRole('button', { name: 'Отправить запрос', exact: true }).click();
+  await role('coordinator_mgsu_demo');
+  await go('/university/students/student_anna_demo');
+  await page.getByRole('button', { name: 'Принять исправление' }).click();
+  assert(
+    await page.getByRole('alert').innerText().then(t => t.includes('Пояснение')),
+    'coordinator reason required'
+  );
+  await page.getByLabel('Пояснение решения').fill('Учебные сведения проверены, результат исправлен');
+  await page.getByRole('button', { name: 'Принять исправление' }).click();
+  await page.reload();
+  await role('persona_anna');
+  await go('/student/education/history');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Зачёт → Отлично')),
+    'SC04 old/new history'
+  );
+  s = await stored();
+  assert(s.changes.b1.education.education_0.version === 2, 'education version');
+  assert(
+    JSON.stringify(s.changes.b1.applications[0].educationSnapshot) === educationSnapshot,
+    'AC06 immutable education snapshot'
+  );
+  await go('/notifications');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Исправление образовательных сведений принято')),
+    'student notified'
+  );
+  await go('/student/projects/new');
+  await page.getByLabel('Название проекта').fill('Учебный график корпуса');
+  await page.getByLabel('Учебная задача', { exact: true }).fill('Распланировать работы на объекте');
+  await page.getByLabel('Личный вклад', { exact: true }).fill('Построила график производства работ');
+  await page.getByLabel('Учебный результат', { exact: true }).fill('Подготовила пояснительную записку');
+  await page.getByLabel('Инструменты через запятую').fill('Таблицы, График работ');
+  await page.getByRole('button', { name: 'Сохранить проект' }).click();
+  await go('/student/profile');
+  assert(
+    await page.getByRole('heading', { name: 'Учебный график корпуса', exact: false }).isVisible(),
+    'project persisted'
+  );
+  // Exercise the new assistant contract without an external model in this browser regression.
+  await page.route(
+    '**/.netlify/functions/ai',
+    async route => {
+      const req = route.request();
+      const payload = req.method() === 'POST' ? JSON.parse(req.postData()) : null;
+      await route.fulfill({
+        json: payload
+          ? {
+            mode: 'mock',
+            answer: payload.history.length
+              ? {
+                type: 'result',
+                message: 'Проверьте текст',
+                content: { about: 'Построила график работ в учебном проекте.' }
+              }
+              : { type: 'question', message: 'Что сделали лично вы?' }
+          }
+          : { mode: 'mock', available: true }
+      });
+    }
+  );
+  await go('/student/resumes/resume_0/assistant');
+  await page.getByLabel('Ваше сообщение', { exact: true }).fill('Хочу в ПТО');
+  await page.getByRole('button', { name: 'Отправить', exact: true }).click();
+  await page.getByText('Что сделали лично вы?', { exact: false }).waitFor();
+  await page.getByLabel('Ваше сообщение', { exact: true }).fill('Построила график работ');
+  await page.getByRole('button', { name: 'Отправить', exact: true }).click();
+  await page.getByLabel('Изменить текст', { exact: true }).waitFor();
+  assert((await stored()).changes.b1?.resumes?.resume_0 === undefined, 'no automatic resume write');
+  await page.getByRole('button', { name: 'Добавить в профиль', exact: true }).click();
+  await go('/student/resumes/resume_0/edit');
+  assert(
+    await page.getByLabel('Самоописание', { exact: true }).inputValue().then(t => t.includes('Построила график работ')),
+    'assistant accepted'
+  );
+  await page.getByLabel('Самоописание', { exact: true }).fill('Отредактировано вручную: учебный график');
+  await page.getByRole('button', { name: 'Сохранить резюме', exact: true }).click();
+  await page.reload();
+  assert(
+    await page.getByLabel('Самоописание', { exact: true }).inputValue().then(t => t.includes('вручную')),
+    'manual save'
+  );
+  s = await stored();
+  assert(JSON.stringify(s.changes.b1.applications[0].resumeSnapshot) === snapshot, 'old resume snapshot');
+  await go('/student/resumes/resume_0/assistant');
+  await page.reload();
+  assert(
+    await page.getByLabel('Ваше сообщение', { exact: true }).inputValue() === '',
+    'history not persisted'
+  );
+  await page.getByRole('link', { name: '← Ручной редактор резюме', exact: true }).click();
+  assert(
+    await page.getByLabel('Самоописание', { exact: true }).inputValue().then(t => t.includes('вручную')),
+    'cancel preserved'
+  );
+  await go('/student/saved');
+  assert(
+    await page.getByRole('link', { name: 'Практика в отделе ПТО', exact: false }).isVisible(),
+    'favorites persisted'
+  );
+  await go('/practices?q=неизвестное');
+  assert(await page.getByRole('heading', { name: 'Ничего не найдено' }).isVisible(), 'empty search');
+  await page.getByRole('button', { name: 'Показать все' }).click();
+  await go('/jobs?kind=internship');
+  assert(await page.getByRole('heading', { name: 'Работа и стажировки' }).isVisible(), 'jobs');
+  await mkdir('../docs/previews', { recursive: true });
+  await go('/practices?program=ПТО&sort=matching');
+  await page.screenshot({ path: '../docs/previews/p02-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 360, height: 800 });
+  for (const route of [
+    '/practices?program=ПТО',
+    '/practices/offer_pto_demo',
+    '/student/education',
+    '/student/resumes/resume_0/assistant',
+    '/student/profile'
+  ]) {
+    await go(route);
+    assert(await page.evaluate(() => document.documentElement.scrollWidth <= 360), '360 overflow ' + route);
+  }
+  await go('/practices?program=ПТО');
+  await page.screenshot({ path: '../docs/previews/p02-mobile.png', fullPage: true });
+  assert(errors.length === 0, errors.join('\n'));
+  console.log(
+    'PASS B1: SC01 through submitted/employer read, SC03, SC04, AC02/06/07/08, snapshots, storage, 360px; JSON bytes:',
+    new TextEncoder().encode(JSON.stringify(await stored())).length
+  );
+} finally {
+  await browser.close();
+}

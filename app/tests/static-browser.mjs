@@ -1,7 +1,56 @@
-import {createServer} from 'node:http';
-import {readFile} from 'node:fs/promises';
-import {resolve,extname,sep} from 'node:path';
-import {chromium,expect} from '@playwright/test';
-const root=resolve('dist'),server=createServer(async(req,res)=>{const path=new URL(req.url,'http://localhost').pathname;if(!path.startsWith('/demo-preview/')){res.writeHead(404).end();return}const file=resolve(root,decodeURIComponent(path.slice('/demo-preview/'.length))||'index.html');if(file!==root&&!file.startsWith(root+sep)){res.writeHead(403).end();return}try{const body=await readFile(file);res.writeHead(200,{'Content-Type':({'.html':'text/html; charset=utf-8','.js':'text/javascript; charset=utf-8','.css':'text/css; charset=utf-8','.svg':'image/svg+xml'})[extname(file)]??'application/octet-stream'}).end(body)}catch{res.writeHead(404).end()}});
-await new Promise(r=>server.listen(4176,'127.0.0.1',r));let browser;
-try{browser=await chromium.launch({channel:'msedge',headless:true});const p=await browser.newPage(),errors=[],requests=[];p.on('pageerror',e=>errors.push(e.message));p.on('request',r=>requests.push(r.url()));await p.goto('http://127.0.0.1:4176/demo-preview/#/practices');await expect(p.locator('main h1')).toBeVisible();await p.reload();await expect(p.locator('main h1')).toBeVisible();expect(requests.filter(u=>/^https?:/.test(u)).every(u=>u.startsWith('http://127.0.0.1:4176/demo-preview/'))).toBe(true);expect(requests.some(u=>u.includes('/assets/')&&u.endsWith('.js'))).toBe(true);expect(errors).toEqual([]);console.log('PASS static: dist served from /demo-preview/, relative JS/CSS loaded, direct hash and reload, no external requests or JS errors.')}finally{await browser?.close();await new Promise(r=>server.close(r))}
+import { createServer } from 'node:http';
+import { readFile } from 'node:fs/promises';
+import { resolve, extname, sep } from 'node:path';
+import { chromium, expect } from '@playwright/test';
+const root = resolve('dist');
+const server = createServer(async (req, res) => {
+  const path = new URL(req.url, 'http://localhost').pathname;
+  if (!path.startsWith('/demo-preview/')) {
+    res.writeHead(404).end();
+    return;
+  }
+  const file = resolve(root, decodeURIComponent(path.slice('/demo-preview/'.length)) || 'index.html');
+  if (file !== root && !file.startsWith(root + sep)) {
+    res.writeHead(403).end();
+    return;
+  }
+  try {
+    const body = await readFile(file);
+    res.writeHead(
+      200,
+      {
+        'Content-Type': ({
+          '.html': 'text/html; charset=utf-8',
+          '.js': 'text/javascript; charset=utf-8',
+          '.css': 'text/css; charset=utf-8',
+          '.svg': 'image/svg+xml'
+        })[extname(file)] ?? 'application/octet-stream'
+      }
+    )
+      .end(body);
+  } catch {
+    res.writeHead(404).end();
+  }
+});
+await new Promise(r => server.listen(4176, '127.0.0.1', r));
+let browser;
+try {
+  browser = await chromium.launch({ channel: 'msedge', headless: true });
+  const p = await browser.newPage();
+  const errors = [];
+  const requests = [];
+  p.on('pageerror', e => errors.push(e.message));
+  p.on('request', r => requests.push(r.url()));
+  await p.goto('http://127.0.0.1:4176/demo-preview/#/practices');
+  await expect(p.locator('main h1')).toBeVisible();
+  await p.reload();
+  await expect(p.locator('main h1')).toBeVisible();
+  expect(requests.filter(u => /^https?:/.test(u)).every(u => u.startsWith('http://127.0.0.1:4176/demo-preview/')))
+    .toBe(true);
+  expect(requests.some(u => u.includes('/assets/') && u.endsWith('.js'))).toBe(true);
+  expect(errors).toEqual([]);
+  console.log('PASS static: dist served from /demo-preview/, relative JS/CSS loaded, direct hash and reload, no external requests or JS errors.');
+} finally {
+  await browser?.close();
+  await new Promise(r => server.close(r));
+}

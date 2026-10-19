@@ -1,49 +1,386 @@
-import { chromium,expect } from '@playwright/test';
-import { mkdir,readFile,writeFile } from 'node:fs/promises';
-const browser=await chromium.launch({channel:'msedge',headless:true}),base=process.env.DEMO_BASE_URL??'http://127.0.0.1:5175/',context=await browser.newContext({viewport:{width:1440,height:1000}}),page=await context.newPage();
-const errors=[];page.on('pageerror',e=>errors.push(e.message));let cancelNext=false;page.on('dialog',d=>{if(cancelNext){cancelNext=false;return d.dismiss()}return d.accept()});
-const assert=(v,m)=>{if(!v)throw new Error(m)},go=async route=>{await page.goto(base+'#'+route);await page.locator('main').waitFor()},role=async id=>page.getByLabel('Тестовая роль').selectOption(id),stored=()=>page.evaluate(()=>JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));
-try{
- await go('/university/company-requests');await role('coordinator_mgsu_demo');await go('/university/company-requests');
- await page.getByLabel('Сообщение запроса').fill('Запрос мест SC07');await page.getByRole('button',{name:'Отправить запрос мест'}).click();
- const requestId=(await stored()).changes.c.requests.at(-1).id;
- await role('employer_sever_demo');await go('/employer/university-requests');const request=page.getByRole('article').filter({hasText:'Запрос мест SC07'});await request.getByLabel('Предложено мест').fill('1');await request.getByLabel('Ответ компании').fill('Один учебный слот');await request.getByRole('button',{name:'Ответить на запрос'}).click();
- assert((await stored()).changes.c.requests.find(r=>r.id===requestId).proposed===1,'same request entity');await role('coordinator_mgsu_demo');await go('/university/company-requests');assert(await page.locator('main').innerText().then(t=>t.includes('Один учебный слот')),'SC07 linked response');
- await go('/university/requirements');const req=page.locator('[data-requirement="requirement_ПТО_Производственная"]');await req.getByLabel('Минимальный объём часов').fill('160');await req.getByRole('button',{name:'Сохранить новую версию требований'}).click();
- await go('/university/templates');const template=page.locator('[data-template="agreement"]');await template.getByLabel('Текст шаблона').fill('Новый учебный шаблон: {{student}}, {{company}}, {{period}}.');await template.getByRole('button',{name:'Сохранить новую версию шаблона'}).click();
- await page.reload();assert((await stored()).changes.c.templates[0].version===2,'template reload');
- await go('/university/import');await page.getByRole('button',{name:'Образец с ошибками'}).click();await page.getByRole('button',{name:'Проверить импорт'}).click();assert(await page.locator('main').innerText().then(t=>t.includes('Неизвестная программа')),'invalid import preview');await page.getByRole('button',{name:'Применить допустимые строки'}).click();assert(await page.getByRole('alert').innerText().then(t=>t.includes('Подтвердите')),'confirmation import');await page.getByRole('checkbox',{name:'Подтверждаю применение',exact:false}).check();await page.getByRole('button',{name:'Применить допустимые строки'}).click();await page.getByRole('button',{name:'Проверить импорт'}).click();await page.getByRole('button',{name:'Применить допустимые строки'}).click();assert(Object.keys((await stored()).changes.c.importedProfiles).length===1,'upsert no duplicates');await page.reload();
- await go('/university/students');assert(await page.locator('main').innerText().then(t=>t.includes('Допустимый — демо')),'import feeds university');
- await role('persona_anna');await go('/support');await page.getByLabel('Категория обращения').selectOption('Нарушение');await page.getByLabel('Тип связанного объекта').selectOption('offer');await page.getByLabel('Связанный объект').selectOption('offer_13_demo');await page.getByLabel('Текст обращения').fill('Учебная жалоба SC08');await page.getByRole('button',{name:'Создать обращение'}).click();const ticketId=(await stored()).changes.c.tickets[0].id;
- await role('operator_demo');await go('/support/'+ticketId);await page.getByLabel('Ответ в обращении').fill('Учебная карточка скрывается по обращению');await page.getByRole('button',{name:'Скрыть связанное предложение'}).click();await role('persona_anna');await go('/support/'+ticketId);assert(await page.locator('main').innerText().then(t=>t.includes('Предложение скрыто')),'ticket resolution author');
-await role('persona_anna');await go('/support');await page.getByLabel('Категория обращения').selectOption('Данные');await page.getByLabel('Тип связанного объекта').selectOption('education');await page.getByLabel('Связанный объект').selectOption({index:1});await page.getByLabel('Текст обращения').fill('Проверить учебную запись SC08');await page.getByRole('button',{name:'Создать обращение'}).click();const dataTicket=(await stored()).changes.c.tickets.at(-1).id;await role('operator_demo');await go('/support/'+dataTicket);await page.getByLabel('Ответ в обращении').fill('Учебная запись рассмотрена; исправление проходит через координатора');await page.getByLabel('Статус обращения').selectOption('resolved');await page.getByRole('button',{name:'Сохранить ответ'}).click();await role('persona_anna');await go('/notifications');const answer=page.getByRole('article').filter({hasText:'Ответ в обращении'}).last();await answer.getByRole('link',{name:'Перейти',exact:false}).click();await page.getByText('Учебная запись рассмотрена; исправление проходит через координатора',{exact:false}).waitFor();assert(await page.evaluate(()=>location.hash).then(h=>h.includes('/support/'+dataTicket)),'SC08 data answer target');assert((await stored()).changes.notifications.some(n=>n.recipientId==='persona_anna'&&n.target==='/support/'+dataTicket&&n.read),'C02 read and linked ticket');
- await role('employer_sever_demo');await go('/employer/team');const employee=page.locator('form').filter({hasText:'Рекрутер — демо'});await employee.getByLabel('Подроль сотрудника').selectOption('documents');await employee.getByRole('button',{name:'Сохранить полномочия сотрудника'}).click();await role('employer_recruiter_demo');await go('/employer/practices/offer_pto_demo/edit');await page.getByLabel('Название предложения').fill('Недопустимая правка сотрудника');await page.getByRole('button',{name:'Сохранить предложение',exact:true}).click();assert(await page.getByRole('alert').innerText().then(t=>t.includes('подроли')),'AC17 operation rejects');
- await role('operator_demo');await go('/operator/content');await page.getByLabel('Текст статьи').fill('Учебная справка C <script>не исполняется</script>');await page.getByRole('button',{name:'Сохранить статью'}).click();await go('/help');assert(await page.locator('main').innerText().then(t=>t.includes('<script>не исполняется</script>')),'safe content');
- await go('/operator/integrations');await page.getByRole('checkbox',{name:'Контрольная ошибка соединения'}).check();await page.getByRole('button',{name:'Запустить тестовую проверку'}).click();await page.getByText('Имитация: контрольная ошибка соединения.',{exact:false}).waitFor();await page.getByRole('checkbox',{name:'Контрольная ошибка соединения'}).uncheck();await page.getByRole('button',{name:'Запустить тестовую проверку'}).click();await page.getByText('Имитация: тестовый адаптер завершил проверку.',{exact:false}).waitFor();
- await go('/operator/users');const user=page.getByRole('article').filter({hasText:'Илья Соколов'});await user.getByRole('button',{name:'Отключить пользователя'}).click();await expect(page.getByLabel('Тестовая роль').locator('option[value="persona_ilya"]')).toHaveAttribute('disabled','');
- await go('/operator/dictionaries');await page.getByLabel('Название элемента').fill('Учебная отделка C');await page.getByLabel('Задачи и описание').fill('Учебные отделочные работы');await page.getByRole('button',{name:'Добавить элемент справочника'}).click();await role('employer_sever_demo');await go('/employer/practices/new/edit');assert(await page.getByLabel('Строительное направление').locator('option').allTextContents().then(t=>t.includes('Учебная отделка C')),'new forms use dictionary');
- await page.getByLabel('Название предложения').fill('Несохранённый черновик');cancelNext=true;await page.locator('.demo-tools').evaluate(el=>el.open=true);await page.getByRole('link',{name:'На публичный сайт',exact:true}).click();assert(await page.evaluate(()=>location.hash).then(t=>t.includes('/employer/practices/new/edit')),'unsaved cancel');
- await role('coordinator_mgsu_demo');await go('/university/profile');await page.getByLabel('Демонстрационное описание МГСУ').fill('Учебный профиль МГСУ C: официального обмена нет');await page.getByRole('button',{name:'Сохранить описание вуза'}).click();await go('/universities/mgsu');assert(await page.locator('main').innerText().then(t=>t.includes('Учебный профиль МГСУ C')),'U02 public update');
- await go('/university/programs');const program=page.locator('form').first();await program.getByLabel('Название программы').fill('ПТО — учебная программа C');await program.getByLabel('Учебная группа').fill('ДЕМО-ПТО-C');await program.getByRole('button',{name:'Сохранить учебную программу'}).click();await go('/universities/mgsu');assert(await page.locator('main').innerText().then(t=>t.includes('ДЕМО-ПТО-C')),'U03 programs/groups linked');
- await role('persona_anna');await go('/student/settings');await page.getByLabel('Видимость профиля').selectOption('hidden');await role('employer_sever_demo');await go('/employer/students/student_anna_demo');assert(await page.getByRole('heading',{name:'Страница не найдена'}).isVisible(),'S16 hidden profile');await role('persona_anna');await go('/student/settings');await page.getByLabel('Видимость профиля').selectOption('visible');await go('/settings/notifications');await page.getByRole('checkbox',{name:'Показывать необязательные рекомендации'}).uncheck();await go('/student');assert(await page.getByRole('heading',{name:'Места по вашей траектории'}).count()===0,'C08 optional recommendations');assert((await stored()).changes.notifications.length>0,'mandatory notifications retained');
- await go('/companies?q=неизвестная');assert(await page.locator('main').innerText().then(t=>t.includes('Ничего не найдено')),'P06 empty');await go('/professions?q=коллизий');assert(await page.locator('main').innerText().then(t=>t.includes('Проверка коллизий')),'P10 skill search');
- await role('operator_demo');await go('/operator/ai-quality');const example=page.getByRole('article').first();await example.getByLabel('Обоснование оценки примера').fill('Учебный пример отмечен для доработки');await example.getByRole('button',{name:'Отметить ошибку примера'}).click();await page.reload();assert((await stored()).changes.c.aiExamples[0].verdict==='needs_revision','O07 saved verdict');
- await role('operator_demo');await go('/operator/reports');await page.getByLabel('Программа аналитики').selectOption('ПТО');await page.getByLabel('Предложение аналитики').selectOption('offer_pto_demo');assert(await page.locator('main').innerText().then(t=>t.includes('Выборка: 1 предложений')),'E15 offer filter');await page.getByLabel('Предложение аналитики').selectOption('');await page.getByRole('button',{name:'Экспорт текущей выборки CSV'}).click();const downloadPromise=page.waitForEvent('download');await page.getByRole('button',{name:'Скачать CSV',exact:true}).click();const download=await downloadPromise;assert(download.suggestedFilename()==='demo-analytics.csv','csv extension');const csv=await readFile(await download.path(),'utf8');assert(csv.includes('Демонстрационные данные')&&csv.includes('ПТО')&&!csv.includes('Миронова')&&!csv.includes('Отлично'),'aggregate CSV excludes personal data');
- await mkdir('../docs/previews',{recursive:true});await page.screenshot({path:'../docs/previews/c-analytics-desktop.png',fullPage:true});await page.setViewportSize({width:360,height:800});assert(await page.evaluate(()=>document.documentElement.scrollWidth<=360),'analytics 360');await page.screenshot({path:'../docs/previews/c-analytics-mobile.png',fullPage:true});await page.setViewportSize({width:1440,height:1000});
- console.log('PASS C: SC07 request/version, SC08 import/appeal/roles/integration, SC09 filters/CSV, storage and 360px');
+import { chromium, expect } from '@playwright/test';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const base = process.env.DEMO_BASE_URL ?? 'http://127.0.0.1:5175/';
+const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+const page = await context.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+let cancelNext = false;
+page.on('dialog', d => {
+  if (cancelNext) {
+    cancelNext = false;
+    return d.dismiss();
+  }
+  return d.accept();
+});
+const assert = (v, m) => {
+  if (!v) throw new Error(m);
+};
+const go = async route => {
+  await page.goto(base + '#' + route);
+  await page.locator('main').waitFor();
+};
+const role = async id => page.getByLabel('Тестовая роль').selectOption(id);
+const stored = () => page.evaluate(() => JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));
+try {
+  await go('/university/company-requests');
+  await role('coordinator_mgsu_demo');
+  await go('/university/company-requests');
+  await page.getByLabel('Сообщение запроса').fill('Запрос мест SC07');
+  await page.getByRole('button', { name: 'Отправить запрос мест' }).click();
+  const requestId = (await stored()).changes.c.requests.at(-1).id;
+  await role('employer_sever_demo');
+  await go('/employer/university-requests');
+  const request = page.getByRole('article').filter({ hasText: 'Запрос мест SC07' });
+  await request.getByLabel('Предложено мест').fill('1');
+  await request.getByLabel('Ответ компании').fill('Один учебный слот');
+  await request.getByRole('button', { name: 'Ответить на запрос' }).click();
+  assert(
+    (await stored()).changes.c.requests.find(r => r.id === requestId).proposed === 1,
+    'same request entity'
+  );
+  await role('coordinator_mgsu_demo');
+  await go('/university/company-requests');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Один учебный слот')),
+    'SC07 linked response'
+  );
+  await go('/university/requirements');
+  const req = page.locator('[data-requirement="requirement_ПТО_Производственная"]');
+  await req.getByLabel('Минимальный объём часов').fill('160');
+  await req.getByRole('button', { name: 'Сохранить новую версию требований' }).click();
+  await go('/university/templates');
+  const template = page.locator('[data-template="agreement"]');
+  await template.getByLabel('Текст шаблона').fill('Новый учебный шаблон: {{student}}, {{company}}, {{period}}.');
+  await template.getByRole('button', { name: 'Сохранить новую версию шаблона' }).click();
+  await page.reload();
+  assert((await stored()).changes.c.templates[0].version === 2, 'template reload');
+  await go('/university/import');
+  await page.getByRole('button', { name: 'Образец с ошибками' }).click();
+  await page.getByRole('button', { name: 'Проверить импорт' }).click();
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Неизвестная программа')),
+    'invalid import preview'
+  );
+  await page.getByRole('button', { name: 'Применить допустимые строки' }).click();
+  assert(
+    await page.getByRole('alert').innerText().then(t => t.includes('Подтвердите')),
+    'confirmation import'
+  );
+  await page.getByRole('checkbox', { name: 'Подтверждаю применение', exact: false }).check();
+  await page.getByRole('button', { name: 'Применить допустимые строки' }).click();
+  await page.getByRole('button', { name: 'Проверить импорт' }).click();
+  await page.getByRole('button', { name: 'Применить допустимые строки' }).click();
+  assert(Object.keys((await stored()).changes.c.importedProfiles).length === 1, 'upsert no duplicates');
+  await page.reload();
+  await go('/university/students');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Допустимый — демо')),
+    'import feeds university'
+  );
+  await role('persona_anna');
+  await go('/support');
+  await page.getByLabel('Категория обращения').selectOption('Нарушение');
+  await page.getByLabel('Тип связанного объекта').selectOption('offer');
+  await page.getByLabel('Связанный объект').selectOption('offer_13_demo');
+  await page.getByLabel('Текст обращения').fill('Учебная жалоба SC08');
+  await page.getByRole('button', { name: 'Создать обращение' }).click();
+  const ticketId = (await stored()).changes.c.tickets[0].id;
+  await role('operator_demo');
+  await go('/support/' + ticketId);
+  await page.getByLabel('Ответ в обращении').fill('Учебная карточка скрывается по обращению');
+  await page.getByRole('button', { name: 'Скрыть связанное предложение' }).click();
+  await role('persona_anna');
+  await go('/support/' + ticketId);
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Предложение скрыто')),
+    'ticket resolution author'
+  );
+  await role('persona_anna');
+  await go('/support');
+  await page.getByLabel('Категория обращения').selectOption('Данные');
+  await page.getByLabel('Тип связанного объекта').selectOption('education');
+  await page.getByLabel('Связанный объект').selectOption({ index: 1 });
+  await page.getByLabel('Текст обращения').fill('Проверить учебную запись SC08');
+  await page.getByRole('button', { name: 'Создать обращение' }).click();
+  const dataTicket = (await stored()).changes.c.tickets.at(-1).id;
+  await role('operator_demo');
+  await go('/support/' + dataTicket);
+  await page.getByLabel('Ответ в обращении').fill('Учебная запись рассмотрена; исправление проходит через координатора');
+  await page.getByLabel('Статус обращения').selectOption('resolved');
+  await page.getByRole('button', { name: 'Сохранить ответ' }).click();
+  await role('persona_anna');
+  await go('/notifications');
+  const answer = page.getByRole('article').filter({ hasText: 'Ответ в обращении' }).last();
+  await answer.getByRole('link', { name: 'Перейти', exact: false }).click();
+  await page.getByText('Учебная запись рассмотрена; исправление проходит через координатора', { exact: false })
+    .waitFor();
+  assert(
+    await page.evaluate(() => location.hash).then(h => h.includes('/support/' + dataTicket)),
+    'SC08 data answer target'
+  );
+  assert(
+    (await stored()).changes.notifications.some(n => n.recipientId === 'persona_anna' && n.target === '/support/' + dataTicket && n.read),
+    'C02 read and linked ticket'
+  );
+  await role('employer_sever_demo');
+  await go('/employer/team');
+  const employee = page.locator('form').filter({ hasText: 'Рекрутер — демо' });
+  await employee.getByLabel('Подроль сотрудника').selectOption('documents');
+  await employee.getByRole('button', { name: 'Сохранить полномочия сотрудника' }).click();
+  await role('employer_recruiter_demo');
+  await go('/employer/practices/offer_pto_demo/edit');
+  await page.getByLabel('Название предложения').fill('Недопустимая правка сотрудника');
+  await page.getByRole('button', { name: 'Сохранить предложение', exact: true }).click();
+  assert(
+    await page.getByRole('alert').innerText().then(t => t.includes('подроли')),
+    'AC17 operation rejects'
+  );
+  await role('operator_demo');
+  await go('/operator/content');
+  await page.getByLabel('Текст статьи').fill('Учебная справка C <script>не исполняется</script>');
+  await page.getByRole('button', { name: 'Сохранить статью' }).click();
+  await go('/help');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('<script>не исполняется</script>')),
+    'safe content'
+  );
+  await go('/operator/integrations');
+  await page.getByRole('checkbox', { name: 'Контрольная ошибка соединения' }).check();
+  await page.getByRole('button', { name: 'Запустить тестовую проверку' }).click();
+  await page.getByText('Имитация: контрольная ошибка соединения.', { exact: false }).waitFor();
+  await page.getByRole('checkbox', { name: 'Контрольная ошибка соединения' }).uncheck();
+  await page.getByRole('button', { name: 'Запустить тестовую проверку' }).click();
+  await page.getByText('Имитация: тестовый адаптер завершил проверку.', { exact: false }).waitFor();
+  await go('/operator/users');
+  const user = page.getByRole('article').filter({ hasText: 'Илья Соколов' });
+  await user.getByRole('button', { name: 'Отключить пользователя' }).click();
+  await expect(page.getByLabel('Тестовая роль').locator('option[value="persona_ilya"]')).toHaveAttribute(
+    'disabled',
+    ''
+  );
+  await go('/operator/dictionaries');
+  await page.getByLabel('Название элемента').fill('Учебная отделка C');
+  await page.getByLabel('Задачи и описание').fill('Учебные отделочные работы');
+  await page.getByRole('button', { name: 'Добавить элемент справочника' }).click();
+  await role('employer_sever_demo');
+  await go('/employer/practices/new/edit');
+  assert(
+    await page.getByLabel('Строительное направление').locator('option').allTextContents().then(t => t.includes('Учебная отделка C')),
+    'new forms use dictionary'
+  );
+  await page.getByLabel('Название предложения').fill('Несохранённый черновик');
+  cancelNext = true;
+  await page.locator('.demo-tools').evaluate(el => el.open = true);
+  await page.getByRole('link', { name: 'На публичный сайт', exact: true }).click();
+  assert(
+    await page.evaluate(() => location.hash).then(t => t.includes('/employer/practices/new/edit')),
+    'unsaved cancel'
+  );
+  await role('coordinator_mgsu_demo');
+  await go('/university/profile');
+  await page.getByLabel('Демонстрационное описание МГСУ').fill('Учебный профиль МГСУ C: официального обмена нет');
+  await page.getByRole('button', { name: 'Сохранить описание вуза' }).click();
+  await go('/universities/mgsu');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Учебный профиль МГСУ C')),
+    'U02 public update'
+  );
+  await go('/university/programs');
+  const program = page.locator('form').first();
+  await program.getByLabel('Название программы').fill('ПТО — учебная программа C');
+  await program.getByLabel('Учебная группа').fill('ДЕМО-ПТО-C');
+  await program.getByRole('button', { name: 'Сохранить учебную программу' }).click();
+  await go('/universities/mgsu');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('ДЕМО-ПТО-C')),
+    'U03 programs/groups linked'
+  );
+  await role('persona_anna');
+  await go('/student/settings');
+  await page.getByLabel('Видимость профиля').selectOption('hidden');
+  await role('employer_sever_demo');
+  await go('/employer/students/student_anna_demo');
+  assert(
+    await page.getByRole('heading', { name: 'Страница не найдена' }).isVisible(),
+    'S16 hidden profile'
+  );
+  await role('persona_anna');
+  await go('/student/settings');
+  await page.getByLabel('Видимость профиля').selectOption('visible');
+  await go('/settings/notifications');
+  await page.getByRole('checkbox', { name: 'Показывать необязательные рекомендации' }).uncheck();
+  await go('/student');
+  assert(
+    await page.getByRole('heading', { name: 'Места по вашей траектории' }).count() === 0,
+    'C08 optional recommendations'
+  );
+  assert((await stored()).changes.notifications.length > 0, 'mandatory notifications retained');
+  await go('/companies?q=неизвестная');
+  assert(await page.locator('main').innerText().then(t => t.includes('Ничего не найдено')), 'P06 empty');
+  await go('/professions?q=коллизий');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Проверка коллизий')),
+    'P10 skill search'
+  );
+  await role('operator_demo');
+  await go('/operator/ai-quality');
+  const example = page.getByRole('article').first();
+  await example.getByLabel('Обоснование оценки примера').fill('Учебный пример отмечен для доработки');
+  await example.getByRole('button', { name: 'Отметить ошибку примера' }).click();
+  await page.reload();
+  assert((await stored()).changes.c.aiExamples[0].verdict === 'needs_revision', 'O07 saved verdict');
+  await role('operator_demo');
+  await go('/operator/reports');
+  await page.getByLabel('Программа аналитики').selectOption('ПТО');
+  await page.getByLabel('Предложение аналитики').selectOption('offer_pto_demo');
+  assert(
+    await page.locator('main').innerText().then(t => t.includes('Выборка: 1 предложений')),
+    'E15 offer filter'
+  );
+  await page.getByLabel('Предложение аналитики').selectOption('');
+  await page.getByRole('button', { name: 'Экспорт текущей выборки CSV' }).click();
+  const downloadPromise = page.waitForEvent('download');
+  await page.getByRole('button', { name: 'Скачать CSV', exact: true }).click();
+  const download = await downloadPromise;
+  assert(download.suggestedFilename() === 'demo-analytics.csv', 'csv extension');
+  const csv = await readFile(await download.path(), 'utf8');
+  assert(
+    csv.includes('Демонстрационные данные') && csv.includes('ПТО') && !csv.includes('Миронова')
+    && !csv.includes('Отлично'),
+    'aggregate CSV excludes personal data'
+  );
+  await mkdir('../docs/previews', { recursive: true });
+  await page.screenshot({ path: '../docs/previews/c-analytics-desktop.png', fullPage: true });
+  await page.setViewportSize({ width: 360, height: 800 });
+  assert(await page.evaluate(() => document.documentElement.scrollWidth <= 360), 'analytics 360');
+  await page.screenshot({ path: '../docs/previews/c-analytics-mobile.png', fullPage: true });
+  await page.setViewportSize({ width: 1440, height: 1000 });
+  console.log('PASS C: SC07 request/version, SC08 import/appeal/roles/integration, SC09 filters/CSV, storage and 360px');
 
- const auditContext=await browser.newContext({viewport:{width:process.env.DEMO_MOBILE==='1'?360:1440,height:1000}}),audit=await auditContext.newPage();audit.on('pageerror',e=>errors.push(e.message));audit.on('dialog',d=>d.accept());const visit=async route=>{await audit.goto(base+'#'+route);await audit.locator('main').waitFor()},selectRole=async id=>{if(await audit.getByLabel('Тестовая роль').inputValue()!==id)await audit.getByLabel('Тестовая роль').selectOption(id)};
- await visit('/practices/offer_pto_demo');await audit.getByRole('checkbox',{name:'Подтверждаю передачу',exact:false}).check();await audit.getByRole('button',{name:'Отправить отклик',exact:true}).click();await audit.getByRole('link',{name:'Отклик уже отправлен',exact:false}).waitFor();let snapshot=await audit.evaluate(()=>JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));const appId=snapshot.changes.b1.applications[0].id;
- await selectRole('employer_sever_demo');await visit('/employer/applications/'+appId);await audit.getByLabel('Комментарий решения').fill('Аудит основной практики');await audit.getByRole('button',{name:'Предложить место',exact:true}).click();await selectRole('persona_anna');await visit('/student/applications/'+appId);await audit.getByRole('button',{name:'Принять предложение компании'}).click();await audit.getByRole('link',{name:'Открыть дело практики',exact:false}).waitFor();snapshot=await audit.evaluate(()=>JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));const practiceId=Object.keys(snapshot.changes.b2.practices)[0];
- await visit('/support');await audit.getByLabel('Текст обращения').fill('Обращение аудита карты');await audit.getByRole('button',{name:'Создать обращение'}).click();snapshot=await audit.evaluate(()=>JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));const supportId=snapshot.changes.c.tickets[0].id;
- const screens=JSON.parse((await readFile('../docs/screens.json','utf8')).replace(/^\ufeff/,'')),results=[];
- for(const screen of screens){const id=screen.id,persona=id.startsWith('E')?'employer_sever_demo':id.startsWith('U')?'coordinator_mgsu_demo':id.startsWith('O')?'operator_demo':['C05','C06'].includes(id)?'coordinator_mgsu_demo':'persona_anna';await selectRole(persona);let route=screen.route.replace(':companyId','company_sever_demo').replace(':offerId',id==='P05'||id==='E04'?'offer_13_demo':'offer_pto_demo').replace(':professionId','profession_0').replace(':studentId','student_anna_demo').replace(':projectId','project_0').replace(':resumeId','resume_0').replace(':applicationId',appId).replace(':practiceId',practiceId).replace(':ticketId',supportId).replace(':documentId','document_practice_0_agreement_1').replace(':conversationId?','application_'+appId);
-  if(id==='D03'){await visit('/demo');await audit.locator('.demo-tools').evaluate(el=>el.open=true);await audit.getByRole('button',{name:'Начать заново'}).click();await audit.getByRole('dialog').waitFor();await audit.getByRole('button',{name:'Отмена',exact:true}).click();route='/demo (modal:reset)'}else if(id==='C07'){await visit('/statistics');await audit.getByRole('button',{name:'Экспорт текущей выборки CSV'}).click();await audit.getByRole('dialog').waitFor();await audit.getByRole('button',{name:'Отмена экспорта'}).click();route='/statistics (modal:export)'}else await visit(route);
-  const headings=await audit.locator('main h1').allTextContents(),denied=headings.some(t=>/Страница не найдена|Недоступно|Выберите тестового/.test(t));results.push({id,route:screen.route,title:screen.title,implementation:denied?'Дефект маршрута':'Работает локально',action:screen.action,routeChecked:!denied,actionChecked:false,statesChecked:false,defect:denied?'Ожидаемый контекст не открылся':'',evidence:'Маршрут Edge: '+route+'; '+headings.join('; ')});const unnamed=await audit.locator('main').evaluate(el=>Array.from(el.querySelectorAll('input:not([type=hidden]),select,textarea')).filter(n=>!n.labels?.length&&!n.getAttribute('aria-label')&&!n.getAttribute('aria-labelledby')).map(n=>n.outerHTML));assert(unnamed.length===0,'Unnamed controls '+id+' '+unnamed.join(';'));if(process.env.DEMO_MOBILE==='1')assert(await audit.evaluate(()=>document.documentElement.scrollWidth<=360),'Mobile overflow '+id);assert(!denied,'80 route '+id+' '+route+' '+headings.join(';'));console.log('ROUTE',id,'PASS');
- }
- await writeFile('../docs/coverage.json',JSON.stringify(results,null,2),'utf8');assert(results.length===80,'80 identifiers');assert(errors.length===0,errors.join('\n'));console.log('PASS 80 routes; no JS errors. Actions/states evidence is recorded separately.');await auditContext.close();
-}finally{await browser.close()}
-
-
-
-
+  const auditContext = await browser.newContext({ viewport: { width: process.env.DEMO_MOBILE === '1' ? 360 : 1440, height: 1000 } });
+  const audit = await auditContext.newPage();
+  audit.on('pageerror', e => errors.push(e.message));
+  audit.on('dialog', d => d.accept());
+  const visit = async route => {
+    await audit.goto(base + '#' + route);
+    await audit.locator('main').waitFor();
+  };
+  const selectRole = async id => {
+    if (await audit.getByLabel('Тестовая роль').inputValue() !== id) await audit.getByLabel('Тестовая роль').selectOption(id);
+  };
+  await visit('/practices/offer_pto_demo');
+  await audit.getByRole('checkbox', { name: 'Подтверждаю передачу', exact: false }).check();
+  await audit.getByRole('button', { name: 'Отправить отклик', exact: true }).click();
+  await audit.getByRole('link', { name: 'Отклик уже отправлен', exact: false }).waitFor();
+  let snapshot = await audit.evaluate(() => JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));
+  const appId = snapshot.changes.b1.applications[0].id;
+  await selectRole('employer_sever_demo');
+  await visit('/employer/applications/' + appId);
+  await audit.getByLabel('Комментарий решения').fill('Аудит основной практики');
+  await audit.getByRole('button', { name: 'Предложить место', exact: true }).click();
+  await selectRole('persona_anna');
+  await visit('/student/applications/' + appId);
+  await audit.getByRole('button', { name: 'Принять предложение компании' }).click();
+  await audit.getByRole('link', { name: 'Открыть дело практики', exact: false }).waitFor();
+  snapshot = await audit.evaluate(() => JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));
+  const practiceId = Object.keys(snapshot.changes.b2.practices)[0];
+  await visit('/support');
+  await audit.getByLabel('Текст обращения').fill('Обращение аудита карты');
+  await audit.getByRole('button', { name: 'Создать обращение' }).click();
+  snapshot = await audit.evaluate(() => JSON.parse(localStorage.getItem('stroitelnaia-kariera:demo:v1')));
+  const supportId = snapshot.changes.c.tickets[0].id;
+  const screens = JSON.parse((await readFile('../docs/screens.json', 'utf8')).replace(/^\ufeff/, ''));
+  const results = [];
+  for (const screen of screens) {
+    const id = screen.id;
+    const persona = id.startsWith('E')
+      ? 'employer_sever_demo'
+      : id.startsWith('U')
+        ? 'coordinator_mgsu_demo'
+        : id.startsWith('O') ? 'operator_demo' : ['C05', 'C06'].includes(id) ? 'coordinator_mgsu_demo' : 'persona_anna';
+    await selectRole(persona);
+    let route = screen.route.replace(':companyId', 'company_sever_demo').replace(
+      ':offerId',
+      id === 'P05' || id === 'E04' ? 'offer_13_demo' : 'offer_pto_demo'
+    )
+      .replace(
+        ':professionId',
+        'profession_0'
+      )
+      .replace(
+        ':studentId',
+        'student_anna_demo'
+      )
+      .replace(
+        ':projectId',
+        'project_0'
+      )
+      .replace(
+        ':resumeId',
+        'resume_0'
+      )
+      .replace(
+        ':applicationId',
+        appId
+      )
+      .replace(
+        ':practiceId',
+        practiceId
+      )
+      .replace(
+        ':ticketId',
+        supportId
+      )
+      .replace(
+        ':documentId',
+        'document_practice_0_agreement_1'
+      )
+      .replace(
+        ':conversationId?',
+        'application_' + appId
+      );
+    if (id === 'D03') {
+      await visit('/demo');
+      await audit.locator('.demo-tools').evaluate(el => el.open = true);
+      await audit.getByRole('button', { name: 'Начать заново' }).click();
+      await audit.getByRole('dialog').waitFor();
+      await audit.getByRole('button', { name: 'Отмена', exact: true }).click();
+      route = '/demo (modal:reset)';
+    } else if (id === 'C07') {
+      await visit('/statistics');
+      await audit.getByRole('button', { name: 'Экспорт текущей выборки CSV' }).click();
+      await audit.getByRole('dialog').waitFor();
+      await audit.getByRole('button', { name: 'Отмена экспорта' }).click();
+      route = '/statistics (modal:export)';
+    } else await visit(route);
+    const headings = await audit.locator('main h1').allTextContents();
+    const denied = headings.some(t => /Страница не найдена|Недоступно|Выберите тестового/.test(t));
+    results.push({
+      id,
+      route: screen.route,
+      title: screen.title,
+      implementation: denied ? 'Дефект маршрута' : 'Работает локально',
+      action: screen.action,
+      routeChecked: !denied,
+      actionChecked: false,
+      statesChecked: false,
+      defect: denied ? 'Ожидаемый контекст не открылся' : '',
+      evidence: 'Маршрут Edge: ' + route + '; ' + headings.join('; ')
+    });
+    const unnamed = await audit.locator('main').evaluate(el => Array.from(el.querySelectorAll('input:not([type=hidden]),select,textarea')).filter(n => !n.labels?.length && !n.getAttribute('aria-label') && !n.getAttribute('aria-labelledby'))
+      .map(n => n.outerHTML));
+    assert(unnamed.length === 0, 'Unnamed controls ' + id + ' ' + unnamed.join(';'));
+    if (process.env.DEMO_MOBILE === '1') assert(await audit.evaluate(() => document.documentElement.scrollWidth <= 360), 'Mobile overflow ' + id);
+    assert(!denied, '80 route ' + id + ' ' + route + ' ' + headings.join(';'));
+    console.log('ROUTE', id, 'PASS');
+  }
+  await writeFile('../docs/coverage.json', JSON.stringify(results, null, 2), 'utf8');
+  assert(results.length === 80, '80 identifiers');
+  assert(errors.length === 0, errors.join('\n'));
+  console.log('PASS 80 routes; no JS errors. Actions/states evidence is recorded separately.');
+  await auditContext.close();
+} finally {
+  await browser.close();
+}

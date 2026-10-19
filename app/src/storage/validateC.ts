@@ -1,20 +1,114 @@
 import { validProfessional } from '../domain/profile-details';
 import type { CChanges } from '../domain/c-types';
-export function validC(v:unknown):v is CChanges{
- const obj=(x:unknown):x is Record<string,unknown>=>typeof x==='object'&&x!==null&&!Array.isArray(x),str=(x:unknown,max=10000)=>typeof x==='string'&&x.length<=max,strings=(x:unknown)=>Array.isArray(x)&&x.length<=1000&&x.every(t=>str(t));
- const list=(x:unknown,check:(x:Record<string,unknown>)=>boolean)=>Array.isArray(x)&&x.length<=3000&&x.every(t=>obj(t)&&check(t));const map=(x:unknown,check:(x:Record<string,unknown>)=>boolean)=>obj(x)&&Object.values(x).every(t=>obj(t)&&check(t));
- const entity=(x:Record<string,unknown>)=>str(x.id)&&Number.isInteger(x.version)&&Number(x.version)>0&&str(x.createdAt)&&str(x.updatedAt);
- if(!obj(v))return false;
- return list(v.requests,x=>entity(x)&&str(x.companyId)&&str(x.programId)&&str(x.start)&&str(x.end)&&Number.isInteger(x.requested)&&Number.isInteger(x.proposed)&&['pending','answered'].includes(String(x.status))&&str(x.message)&&str(x.response))&&
- list(v.requirements,x=>entity(x)&&str(x.programId)&&str(x.practiceType)&&Number.isInteger(x.minHours)&&Number(x.minHours)>0&&Array.isArray(x.requiredDocuments)&&x.requiredDocuments.length>0&&x.requiredDocuments.every(t=>['agreement','direction','assignment'].includes(t))&&str(x.completionRule))&&
- list(v.templates,x=>entity(x)&&['agreement','direction','assignment','report'].includes(String(x.type))&&str(x.body,3000)&&strings(x.fields))&&
- list(v.tickets,x=>entity(x)&&str(x.authorId)&&str(x.category)&&['offer','company','education','none'].includes(String(x.objectType))&&str(x.objectId)&&['open','in_progress','resolved','closed'].includes(String(x.status))&&list(x.comments,c=>str(c.actorId)&&str(c.text)&&str(c.at)))&&
- list(v.dictionaries,x=>entity(x)&&['direction','skill','profession'].includes(String(x.category))&&str(x.name)&&typeof x.active==='boolean'&&strings(x.skillIds)&&str(x.tasks)&&str(x.programId))&&
- list(v.aiExamples,x=>entity(x)&&str(x.resumeId)&&str(x.branch)&&str(x.text)&&strings(x.facts)&&['pending','approved','needs_revision'].includes(String(x.verdict))&&str(x.comment))&&
- map(v.team,x=>['owner','recruiter','manager','documents'].includes(String(x.subrole))&&strings(x.offerIds))&&strings(v.inactive)&&str(v.universityDescription)&&
- map(v.programs,x=>str(x.name)&&strings(x.skills)&&str(x.group))&&obj(v.content)&&Object.values(v.content).every(x=>str(x,3000))&&map(v.notificationSettings,x=>typeof x.recommendations==='boolean')&&
- list(v.integrationChecks,x=>str(x.id)&&str(x.at)&&typeof x.success==='boolean'&&str(x.message))&&
- list(v.batches,x=>entity(x)&&['ready','invalid','applied'].includes(String(x.status))&&strings(x.appliedIds)&&list(x.rows,r=>Number.isInteger(r.index)&&strings(r.errors)&&(r.row===null||obj(r.row)&&str(r.row.externalId)&&str(r.row.name)&&str(r.row.programId)&&Number.isInteger(r.row.course)&&str(r.row.group)&&strings(r.row.skills)&&list(r.row.disciplines,d=>str(d.name)&&str(d.result)))))&&
- map(v.importedProfiles,x=>(x.professional===undefined||validProfessional(x.professional))&&entity(x)&&str(x.name)&&str(x.programId)&&Number.isInteger(x.course)&&str(x.universityId)&&str(x.region)&&strings(x.skills)&&strings(x.availability)&&Array.isArray(x.availability)&&x.availability.length===2&&str(x.interests)&&str(x.schedule)&&typeof x.relocate==='boolean'&&['visible','hidden'].includes(String(x.visibility)))&&
- map(v.importedEducation,x=>entity(x)&&str(x.studentId)&&x.source==='university_demo'&&str(x.sourceDate)&&strings(x.skills)&&list(x.disciplines,d=>str(d.name)&&str(d.result))&&Array.isArray(x.history));
+export function validC(candidateValue: unknown): candidateValue is CChanges {
+  const obj = (x: unknown): x is Record<string, unknown> => typeof x === 'object' && x !== null && !Array.isArray(x);
+  const str = (x: unknown, max = 10000) => typeof x === 'string' && x.length <= max;
+  const strings = (candidateValue: unknown) => Array.isArray(candidateValue) && candidateValue.length <= 1000 && candidateValue.every(t => str(t));
+  const list = (candidateValue: unknown, check: (candidateRecord: Record<string, unknown>) => boolean) => Array.isArray(candidateValue) && candidateValue.length <= 3000 && candidateValue.every(t => obj(t) && check(t));
+  const map = (x: unknown, check: (x: Record<string, unknown>) => boolean) => obj(x) && Object.values(x).every(t => obj(t) && check(t));
+  const entity = (candidateRecord: Record<string, unknown>) => str(candidateRecord.id) && Number.isInteger(candidateRecord.version) && Number(candidateRecord.version) > 0 && str(candidateRecord.createdAt) && str(candidateRecord.updatedAt);
+  if (!obj(candidateValue)) return false;
+  return list(
+    candidateValue.requests,
+    candidateRecord => entity(candidateRecord) && str(candidateRecord.companyId) && str(candidateRecord.programId) && str(candidateRecord.start) && str(candidateRecord.end)
+      && Number.isInteger(candidateRecord.requested)
+      && Number.isInteger(candidateRecord.proposed)
+      && ['pending', 'answered'].includes(String(candidateRecord.status))
+      && str(candidateRecord.message)
+      && str(candidateRecord.response)
+  )
+    &&
+    list(
+      candidateValue.requirements,
+      candidateRecord => entity(candidateRecord) && str(candidateRecord.programId) && str(candidateRecord.practiceType) && Number.isInteger(candidateRecord.minHours) && Number(candidateRecord.minHours) > 0
+        && Array.isArray(candidateRecord.requiredDocuments)
+        && candidateRecord.requiredDocuments.length > 0
+        && candidateRecord.requiredDocuments.every(t => ['agreement', 'direction', 'assignment'].includes(t))
+        && str(candidateRecord.completionRule)
+    )
+    &&
+    list(
+      candidateValue.templates,
+      candidateRecord => entity(candidateRecord) && ['agreement', 'direction', 'assignment', 'report'].includes(String(candidateRecord.type))
+        && str(candidateRecord.body, 3000)
+        && strings(candidateRecord.fields)
+    )
+    &&
+    list(
+      candidateValue.tickets,
+      candidateRecord => entity(candidateRecord) && str(candidateRecord.authorId) && str(candidateRecord.category)
+        && ['offer', 'company', 'education', 'none'].includes(String(candidateRecord.objectType))
+        && str(candidateRecord.objectId)
+        && ['open', 'in_progress', 'resolved', 'closed'].includes(String(candidateRecord.status))
+        && list(candidateRecord.comments, c => str(c.actorId) && str(c.text) && str(c.at))
+    )
+    &&
+    list(
+      candidateValue.dictionaries,
+      candidateRecord => entity(candidateRecord) && ['direction', 'skill', 'profession'].includes(String(candidateRecord.category)) && str(candidateRecord.name)
+        && typeof candidateRecord.active === 'boolean'
+        && strings(candidateRecord.skillIds)
+        && str(candidateRecord.tasks)
+        && str(candidateRecord.programId)
+    )
+    &&
+    list(
+      candidateValue.aiExamples,
+      candidateRecord => entity(candidateRecord) && str(candidateRecord.resumeId) && str(candidateRecord.branch) && str(candidateRecord.text) && strings(candidateRecord.facts)
+        && ['pending', 'approved', 'needs_revision'].includes(String(candidateRecord.verdict))
+        && str(candidateRecord.comment)
+    )
+    &&
+    map(
+      candidateValue.team,
+      candidateRecord => ['owner', 'recruiter', 'manager', 'documents'].includes(String(candidateRecord.subrole)) && strings(candidateRecord.offerIds)
+    )
+    && strings(candidateValue.inactive)
+    && str(candidateValue.universityDescription)
+    &&
+    map(candidateValue.programs, candidateRecord => str(candidateRecord.name) && strings(candidateRecord.skills) && str(candidateRecord.group))
+    && obj(candidateValue.content)
+    && Object.values(candidateValue.content).every(candidateValue => str(candidateValue, 3000))
+    && map(candidateValue.notificationSettings, candidateRecord => typeof candidateRecord.recommendations === 'boolean')
+    &&
+    list(candidateValue.integrationChecks, candidateRecord => str(candidateRecord.id) && str(candidateRecord.at) && typeof candidateRecord.success === 'boolean' && str(candidateRecord.message))
+    &&
+    list(
+      candidateValue.batches,
+      candidateRecord => entity(candidateRecord) && ['ready', 'invalid', 'applied'].includes(String(candidateRecord.status)) && strings(candidateRecord.appliedIds)
+        && list(
+          candidateRecord.rows,
+          r => Number.isInteger(r.index) && strings(r.errors)
+            && (r.row === null
+              || obj(r.row) && str(r.row.externalId) && str(r.row.name) && str(r.row.programId)
+              && Number.isInteger(r.row.course)
+              && str(r.row.group)
+              && strings(r.row.skills)
+              && list(r.row.disciplines, disciplineRecord => str(disciplineRecord.name) && str(disciplineRecord.result)))
+        )
+    )
+    &&
+    map(
+      candidateValue.importedProfiles,
+      candidateRecord => (candidateRecord.professional === undefined || validProfessional(candidateRecord.professional)) && entity(candidateRecord) && str(candidateRecord.name)
+        && str(candidateRecord.programId)
+        && Number.isInteger(candidateRecord.course)
+        && str(candidateRecord.universityId)
+        && str(candidateRecord.region)
+        && strings(candidateRecord.skills)
+        && strings(candidateRecord.availability)
+        && Array.isArray(candidateRecord.availability)
+        && candidateRecord.availability.length === 2
+        && str(candidateRecord.interests)
+        && str(candidateRecord.schedule)
+        && typeof candidateRecord.relocate === 'boolean'
+        && ['visible', 'hidden'].includes(String(candidateRecord.visibility))
+    )
+    &&
+    map(
+      candidateValue.importedEducation,
+      candidateRecord => entity(candidateRecord) && str(candidateRecord.studentId) && candidateRecord.source === 'university_demo' && str(candidateRecord.sourceDate) && strings(candidateRecord.skills)
+        && list(candidateRecord.disciplines, disciplineRecord => str(disciplineRecord.name) && str(disciplineRecord.result))
+        && Array.isArray(candidateRecord.history)
+    );
 }

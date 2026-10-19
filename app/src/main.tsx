@@ -22,45 +22,467 @@ import './styles/workspace.css';
 import './styles/profile.css';
 import './styles/typography.css';
 import './styles/career-actions.css';
-const homes={student:'/student',employer:'/employer',coordinator:'/university',operator:'/operator'};
-const roleNames={student:'Студент',employer:'Работодатель',coordinator:'Координатор вуза',operator:'Оператор'};
+const homes = {
+  student: '/student',
+  employer: '/employer',
+  coordinator: '/university',
+  operator: '/operator'
+};
+const roleNames = {
+  student: 'Студент',
+  employer: 'Работодатель',
+  coordinator: 'Координатор вуза',
+  operator: 'Оператор'
+};
 
-function App(){
- const [boot]=useState(()=>{try{return load(window.localStorage)}catch{return {state:load({getItem(){throw new Error('Хранилище недоступно')},setItem(){},removeItem(){}}).state,error:'Хранилище недоступно'}}});
- const [state,setState]=useState(boot.state),[error,setError]=useState(boot.error),[blocked,setBlocked]=useState(Boolean(boot.error)),[message,setMessage]=useState(''),[route,setRoute]=useState(location.hash.slice(1)||'/'),[resetOpen,setResetOpen]=useState(false),[external,setExternal]=useState(false);
- const [entered,setEntered]=useState(()=>{try{return sessionStorage.getItem('career:entered')===boot.state.activePersonaId}catch{return false}});
- const pendingRoute=useRef(!entered&&route!=='/'&&!route.startsWith('/demo')?route:'');
- const entry=route==='/'||route.split('?')[0]==='/demo'||!entered;
- useEffect(()=>{if(!entered&&route!=='/'&&route.split('?')[0]!=='/demo'){pendingRoute.current=route;location.replace('#/demo')}},[entered,route]);
- const dirty=useRef(false),unsaved=useRef(false),acceptedHash=useRef(location.hash);
- useEffect(installDialogAccessibility,[]);
- useEffect(()=>{const input=(event:Event)=>{if((event.target as HTMLElement)?.closest('form')||event.target instanceof HTMLTextAreaElement)dirty.current=true};const click=(event:MouseEvent)=>{const link=(event.target as HTMLElement)?.closest('a');if(link?.getAttribute('href')?.startsWith('#')&&link.getAttribute('href')!==location.hash&&dirty.current){if(!window.confirm('Есть несохранённый текст. Перейти без сохранения?')){event.preventDefault();event.stopPropagation()}else dirty.current=false}};const unload=(event:BeforeUnloadEvent)=>{if(dirty.current||unsaved.current){event.preventDefault();event.returnValue=''}};const markDraft=()=>{dirty.current=true};const discard=()=>{dirty.current=false};document.addEventListener('career:mark-draft',markDraft);document.addEventListener('career:discard-draft',discard);document.addEventListener('input',input,true);document.addEventListener('click',click,true);window.addEventListener('beforeunload',unload);return()=>{document.removeEventListener('career:mark-draft',markDraft);document.removeEventListener('career:discard-draft',discard);document.removeEventListener('input',input,true);document.removeEventListener('click',click,true);window.removeEventListener('beforeunload',unload)}},[]);
- const dialogRef=useRef<HTMLElement>(null);
- const seed=dataFor(state);
- const persona=seed.personas.find(p=>p.id===state.activePersonaId)!;
- const student=seed.students.find(s=>s.id===persona.studentId);
- useEffect(()=>{const hash=()=>{if(dirty.current&&location.hash!==acceptedHash.current&&!window.confirm('Есть несохранённый текст. Перейти без сохранения?')){history.replaceState(null,'',location.pathname+location.search+acceptedHash.current);return}dirty.current=false;acceptedHash.current=location.hash;setRoute(location.hash.slice(1)||'/')};window.addEventListener('hashchange',hash);const storage=(e:StorageEvent)=>{if(e.key===KEY)setExternal(true)};window.addEventListener('storage',storage);return()=>{window.removeEventListener('hashchange',hash);window.removeEventListener('storage',storage)}},[]);
- function commit(next:Envelope){dirty.current=false;setState(next);setMessage('');if(blocked||external){unsaved.current=true;setError('Изменения пока не сохранены на этом устройстве. Устраните конфликт или восстановите хранилище.');return false}try{persist(localStorage,next);setError('');unsaved.current=false;return true}catch{unsaved.current=true;setError('Изменения пока не сохранены на этом устройстве. Хранилище недоступно или заполнено.');return false}}
- function choose(id:string){if(dirty.current&&!window.confirm('Есть несохранённый текст. Сменить роль без сохранения?'))return;dirty.current=false;const next=switchPersona(state,id,baseSeed);commit(next);setEntered(true);try{sessionStorage.setItem('career:entered',id)}catch{/* Entry remains available in memory. */}location.hash=homes[seed.personas.find(p=>p.id===id)!.role]}
- function retry(){try{if(external)throw new Error('Сначала загрузите изменения другой вкладки');if(blocked)throw new Error('Сначала подтвердите восстановление исходного набора');persist(localStorage,state);setError('');unsaved.current=false;setMessage('Изменения сохранены на этом устройстве')}catch(e){setError(e instanceof Error?e.message:'Не удалось сохранить')}}
- function restore(){try{const next=reset(localStorage);persist(localStorage,next);setState(next);setError('');setBlocked(false);setExternal(false);dirty.current=false;unsaved.current=false;setMessage('Исходный набор восстановлен');pendingRoute.current='';setRoute('/');setEntered(false);try{sessionStorage.removeItem('career:entered')}catch{/* Entry remains cleared in memory. */}location.hash='/'}catch{setError('Не удалось сбросить сохранение. Текущие данные остаются в памяти.')}setResetOpen(false)}
- function start(id:string){const target=pendingRoute.current;pendingRoute.current='';choose(id);if(target)location.hash=target}
- if(entry)return <Welcome key={route.split('?')[0]} state={state} selection={route!=='/'} start={start} resumeHref={entered?'#'+homes[persona.role]:undefined}/>;
- return <><a className="skip-link" href="#main" onClick={e=>{e.preventDefault();document.getElementById('main')?.focus()}}>Перейти к содержимому</a><div className="shell"><Navigation state={state} role={persona.role} route={route} />
- <div className="workspace"><header><div className="personal-identity"><Avatar key={persona.id} name={student?.name??persona.name} photoUrl={student?.photoUrl??persona.photoUrl}/><div className="scenario-indicator"><span className="identity-caption">Личный кабинет</span><strong className="scenario-persona">{student?.name??persona.name}</strong><div className="identity-status-row"><span className="scenario-title">{roleNames[persona.role]}{student?' · '+student.programId:persona.role==='employer'&&persona.active!==false?' · '+({owner:'Владелец / администратор',recruiter:'Рекрутер',manager:'Руководитель подразделения',documents:'Специалист по документам'}[teamRule(state).subrole]):''}</span><a className="header-change-role button" href="#/demo" title="Сохранённые данные сценария останутся в браузере">Сменить роль</a></div></div></div><div className="header-context"><a className="mobile-brand brand" href="#/" aria-label="Строительная карьера — приветственная страница"><span className="brandmark"><img src="./brand/site-logo.svg" alt="" width="352" height="200" aria-hidden="true"/></span></a><CaseInMark/><span className="workspace-demo-label">Демонстрация</span><a className="notification-link" href="#/notifications" aria-label={"Уведомления: непрочитанных "+state.changes.notifications.filter(n=>n.recipientId===persona.id&&!n.read).length}><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21h4M12 2V1"/></svg><span className="notification-count" aria-hidden="true">{state.changes.notifications.filter(n=>n.recipientId===persona.id&&!n.read).length}</span></a></div></header>
- <main id="main" tabIndex={-1}><ContextNavigation state={state} role={persona.role} route={route} />{error&&<div className="notice error" role="alert">{error} <button onClick={retry}>Повторить сохранение</button><button onClick={()=>setResetOpen(true)}>Восстановить набор</button></div>}{external&&<div className="notice" role="alert">Другая вкладка изменила сценарий. Текст в поле останется в памяти.<button onClick={()=>{const result=load(localStorage);setState(result.state);setError(result.error);setBlocked(Boolean(result.error));setExternal(false)}}>Загрузить обновления</button></div>}{message&&<div className="notice" role="status">{message}</div>}
- {persona.active===false?<section className="card"><h1>Тестовый пользователь отключён</h1><p>Выберите другого персонажа. Общий сценарий сохранён.</p><button onClick={()=>choose(seed.personas.find(p=>p.active)?.id??'operator_demo')}>Выбрать доступного персонажа</button></section>:route===homes[persona.role]+'/more'?<section><h1>Разделы кабинета</h1><ContextNavigation state={state} role={persona.role} route={route} expanded /></section>:route==='/demo'?<section className="card"><h1>Выберите тестовую роль</h1><p>Один общий локальный сценарий. Регистрация не требуется.</p>{seed.personas.map(p=><p key={p.id}><button disabled={!p.active} onClick={()=>choose(p.id)}>{roleNames[p.role]} · {p.name}</button></p>)}</section>:route==='/about'?<section className="card about-platform"><span className="eyebrow">О проекте</span><h1>О платформе</h1><p>«Строительная карьера» связывает студентов МГСУ, строительные компании и координатора вуза: от поиска первой практики и отклика до документов, заданий и учебного результата.</p><p>Это учебная демонстрационная версия с вымышленными людьми, компаниями и образовательными данными. Все роли работают с одним локальным сценарием в этом браузере.</p><p>Открытие этой страницы сохраняет выбранный профиль и результаты действий.</p><nav className="platform-directory" aria-label="Каталоги платформы"><a href="#/practices">Практики</a><a href="#/jobs">Работа и стажировки</a><a href="#/companies">Компании</a><a href="#/universities">Вузы</a><a href="#/professions">Профессии и навыки</a><a href="#/statistics">Статистика</a><a href="#/for-employers">Работодателям</a><a href="#/for-universities">Вузам</a></nav><div className="actions"><a className="button primary" href={'#'+homes[persona.role]}>Вернуться в кабинет</a><a href="#/how-it-works">Как это работает →</a><a href="#/demo/about">Учебная дата и ограничения →</a></div></section>:route==='/demo/about'?<section className="card"><span className="eyebrow">О демонстрации</span><h1>Учебная дата и ограничения</h1><p>Учебная дата сценария: <strong>{state.demoClock}</strong>. Это дата демонстрационного набора.</p><p>Вымышленные люди, компании и образовательные сведения. МГСУ — учебный контекст, официальное партнёрство и обмен данными отсутствуют.</p><p>Поиск, карточки, образовательные исправления, проекты, резюме и отправка откликов работают локально. ИИ-помощник обращается к GigaChat через сервер, если подключён; режим отмечен в диалоге. История диалога не сохраняется в браузерное хранилище. Кадровые решения, практика, документы и переписка работают локально.</p><p>Данные сохраняются только в этом браузере. При недоступном хранилище изменения остаются в памяти до закрытия страницы.</p><section className="demo-reset-section"><h2>Демоданные на этом устройстве</h2><p>Сброс восстановит исходный учебный набор для всех тестовых ролей в этом браузере.</p><button onClick={()=>setResetOpen(true)}>Сбросить демоданные</button></section><a href={'#'+homes[persona.role]}>Вернуться в кабинет →</a></section>:route===homes[persona.role]?<RoleHome state={state}/>:handlesC(route)?<CView key={route.split('?')[0]+persona.id} state={state} route={route} commit={commit} choose={choose}/>:handlesB2(route)?<B2View key={route.split('?')[0]+persona.id} state={state} route={route} commit={commit} choose={choose}/>:handlesB1(route)?<B1View key={route.split('?')[0]+persona.id} state={state} route={route} commit={commit} choose={choose}/>:<section className="card placeholder"><h1>Страница недоступна</h1><p>Возможно, ссылка устарела или этот раздел недоступен текущей роли.</p><a className="button" href={'#'+homes[persona.role]}>Вернуться в кабинет</a></section>}
- <footer className="workspace-footer"><span>Строительная карьера</span><nav aria-label="Информация и помощь"><a href={'#'+homes[persona.role]+'/more'}>Разделы кабинета</a><a href="#/about">О платформе</a><a href="#/help">Помощь</a><a href="#/demo/about">Учебная дата и ограничения →</a></nav></footer></main></div>
- {resetOpen&&<div className="overlay"><section ref={dialogRef} role="dialog" aria-modal="true" aria-labelledby="reset-title" className="card dialog"><h2 id="reset-title">Сбросить демоданные?</h2><p>Все результаты действий, отклики, сообщения, документы и изменения профилей всех тестовых ролей в этом браузере будут удалены. Восстановится исходный учебный набор, и откроется приветственная страница. Данные других сайтов не затрагиваются. Это действие нельзя отменить.</p><div className="actions"><button autoFocus onClick={()=>setResetOpen(false)}>Отмена</button><button className="primary" onClick={restore}>Восстановить исходный набор</button></div></section></div>}</div></>
+function App() {
+  const [boot] = useState(() => {
+    try {
+      return load(window.localStorage);
+    } catch {
+      return {
+        state: load({
+          getItem() {
+            throw new Error('Хранилище недоступно');
+          },
+          setItem() { },
+          removeItem() { }
+        }).state,
+        error: 'Хранилище недоступно'
+      };
+    }
+  });
+  const [state, setState] = useState(boot.state);
+  const [error, setError] = useState(boot.error);
+  const [blocked, setBlocked] = useState(Boolean(boot.error));
+  const [message, setMessage] = useState('');
+  const [route, setRoute] = useState(location.hash.slice(1) || '/');
+  const [resetOpen, setResetOpen] = useState(false);
+  const [external, setExternal] = useState(false);
+  const [entered, setEntered] = useState(() => {
+    try {
+      return sessionStorage.getItem('career:entered') === boot.state.activePersonaId;
+    } catch {
+      return false;
+    }
+  });
+  const pendingRoute = useRef(!entered && route !== '/' && !route.startsWith('/demo') ? route : '');
+  const entry = route === '/' || route.split('?')[0] === '/demo' || !entered;
+  useEffect(
+    () => {
+      if (!entered && route !== '/' && route.split('?')[0] !== '/demo') {
+        pendingRoute.current = route;
+        location.replace('#/demo');
+      }
+    },
+    [entered, route]
+  );
+  const dirty = useRef(false);
+  const unsaved = useRef(false);
+  const acceptedHash = useRef(location.hash);
+  useEffect(installDialogAccessibility, []);
+  useEffect(
+    () => {
+      const input = (event: Event) => {
+        if ((event.target as HTMLElement)?.closest('form') || event.target instanceof HTMLTextAreaElement) dirty.current = true;
+      };
+      const click = (event: MouseEvent) => {
+        const link = (event.target as HTMLElement)?.closest('a');
+        if (link?.getAttribute('href')?.startsWith('#') && link.getAttribute('href') !== location.hash
+          && dirty.current) {
+          if (!window.confirm('Есть несохранённый текст. Перейти без сохранения?')) {
+            event.preventDefault();
+            event.stopPropagation();
+          } else dirty.current = false;
+        }
+      };
+      const unload = (event: BeforeUnloadEvent) => {
+        if (dirty.current || unsaved.current) {
+          event.preventDefault();
+          event.returnValue = '';
+        }
+      };
+      const markDraft = () => {
+        dirty.current = true;
+      };
+      const discard = () => {
+        dirty.current = false;
+      };
+      document.addEventListener('career:mark-draft', markDraft);
+      document.addEventListener('career:discard-draft', discard);
+      document.addEventListener('input', input, true);
+      document.addEventListener('click', click, true);
+      window.addEventListener('beforeunload', unload);
+      return () => {
+        document.removeEventListener('career:mark-draft', markDraft);
+        document.removeEventListener('career:discard-draft', discard);
+        document.removeEventListener('input', input, true);
+        document.removeEventListener('click', click, true);
+        window.removeEventListener('beforeunload', unload);
+      };
+    },
+    []
+  );
+  const dialogRef = useRef<HTMLElement>(null);
+  const seed = dataFor(state);
+  const persona = seed.personas.find(p => p.id === state.activePersonaId)!;
+  const student = seed.students.find(candidateStudent => candidateStudent.id === persona.studentId);
+  useEffect(
+    () => {
+      const hash = () => {
+        if (dirty.current && location.hash !== acceptedHash.current
+          && !window.confirm('Есть несохранённый текст. Перейти без сохранения?')) {
+          history.replaceState(null, '', location.pathname + location.search + acceptedHash.current);
+          return;
+        }
+        dirty.current = false;
+        acceptedHash.current = location.hash;
+        setRoute(location.hash.slice(1) || '/');
+      };
+      window.addEventListener('hashchange', hash);
+      const storage = (e: StorageEvent) => {
+        if (e.key === KEY) setExternal(true);
+      };
+      window.addEventListener('storage', storage);
+      return () => {
+        window.removeEventListener('hashchange', hash);
+        window.removeEventListener('storage', storage);
+      };
+    },
+    []
+  );
+  function commit(next: Envelope) {
+    dirty.current = false;
+    setState(next);
+    setMessage('');
+    if (blocked || external) {
+      unsaved.current = true;
+      setError('Изменения пока не сохранены на этом устройстве. Устраните конфликт или восстановите хранилище.');
+      return false;
+    }
+    try {
+      persist(localStorage, next);
+      setError('');
+      unsaved.current = false;
+      return true;
+    } catch {
+      unsaved.current = true;
+      setError('Изменения пока не сохранены на этом устройстве. Хранилище недоступно или заполнено.');
+      return false;
+    }
+  }
+  function choose(id: string) {
+    if (dirty.current && !window.confirm('Есть несохранённый текст. Сменить роль без сохранения?')) return;
+    dirty.current = false;
+    const next = switchPersona(state, id, baseSeed);
+    commit(next);
+    setEntered(true);
+    try {
+      sessionStorage.setItem('career:entered', id);
+    } catch {/* Entry remains available in memory. */ }
+    location.hash = homes[seed.personas.find(p => p.id === id)!.role];
+  }
+  function retry() {
+    try {
+      if (external) throw new Error('Сначала загрузите изменения другой вкладки');
+      if (blocked) throw new Error('Сначала подтвердите восстановление исходного набора');
+      persist(localStorage, state);
+      setError('');
+      unsaved.current = false;
+      setMessage('Изменения сохранены на этом устройстве');
+    } catch (error) {
+      setError(error instanceof Error ? error.message : 'Не удалось сохранить');
+    }
+  }
+  function restore() {
+    try {
+      const next = reset(localStorage);
+      persist(localStorage, next);
+      setState(next);
+      setError('');
+      setBlocked(false);
+      setExternal(false);
+      dirty.current = false;
+      unsaved.current = false;
+      setMessage('Исходный набор восстановлен');
+      pendingRoute.current = '';
+      setRoute('/');
+      setEntered(false);
+      try {
+        sessionStorage.removeItem('career:entered');
+      } catch {/* Entry remains cleared in memory. */ }
+      location.hash = '/';
+    } catch {
+      setError('Не удалось сбросить сохранение. Текущие данные остаются в памяти.');
+    }
+    setResetOpen(false);
+  }
+  function start(id: string) {
+    const target = pendingRoute.current;
+    pendingRoute.current = '';
+    choose(id);
+    if (target) location.hash = target;
+  }
+  if (entry) return <Welcome
+    key={route.split('?')[0]}
+    state={state}
+    selection={route !== '/'}
+    start={start}
+    resumeHref={entered ? '#' + homes[persona.role] : undefined}
+
+
+
+  />;
+  return <>
+    <a
+      className="skip-link"
+      href="#main"
+      onClick={event => {
+        event.preventDefault();
+        document.getElementById('main')?.focus();
+      }}
+
+
+
+    >Перейти к содержимому</a>
+    <div className="shell">
+      <Navigation state={state} role={persona.role} route={route} />
+      <div className="workspace">
+        <header>
+          <div className="personal-identity">
+            <Avatar
+              key={persona.id}
+              name={student?.name ?? persona.name}
+              photoUrl={student?.photoUrl ?? persona.photoUrl}
+
+
+
+            />
+            <div className="scenario-indicator">
+              <span className="identity-caption">Личный кабинет</span>
+              <strong className="scenario-persona">
+                {student?.name ?? persona.name}
+              </strong>
+              <div className="identity-status-row">
+                <span className="scenario-title">
+                  {roleNames[persona.role]}
+                  {student
+                    ? ' · ' + student.programId
+                    : persona.role === 'employer' && persona.active !== false
+                      ? ' · ' + ({
+                        owner: 'Владелец / администратор',
+                        recruiter: 'Рекрутер',
+                        manager: 'Руководитель подразделения',
+                        documents: 'Специалист по документам'
+                      }[teamRule(state).subrole])
+                      : ''}
+                </span>
+                <a
+                  className="header-change-role button"
+                  href="#/demo"
+                  title="Сохранённые данные сценария останутся в браузере"
+
+
+
+                >Сменить роль</a>
+              </div>
+            </div>
+          </div>
+          <div className="header-context">
+            <a
+              className="mobile-brand brand"
+              href="#/"
+              aria-label="Строительная карьера — приветственная страница"
+
+
+
+            >
+              <span className="brandmark">
+                <img src="./brand/site-logo.svg" alt="" width="352" height="200" aria-hidden="true" />
+              </span>
+            </a>
+            <CaseInMark />
+            <span className="workspace-demo-label">Демонстрация</span>
+            <a
+              className="notification-link"
+              href="#/notifications"
+              aria-label={"Уведомления: непрочитанных " + state.changes.notifications.filter(candidateNotification => candidateNotification.recipientId === persona.id && !candidateNotification.read).length}
+
+
+
+            >
+              <svg
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+
+
+
+              >
+                <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9" />
+                <path d="M10 21h4M12 2V1" />
+              </svg>
+              <span className="notification-count" aria-hidden="true">
+                {state.changes.notifications.filter(candidateNotification => candidateNotification.recipientId === persona.id && !candidateNotification.read).length}
+              </span>
+            </a>
+          </div>
+        </header>
+        <main id="main" tabIndex={-1}>
+          <ContextNavigation state={state} role={persona.role} route={route} />
+          {error
+            && <div className="notice error" role="alert">{error} <button onClick={retry}>Повторить сохранение</button><button onClick={() => setResetOpen(true)}>Восстановить набор</button></div>}
+          {external
+            && <div className="notice" role="alert">Другая вкладка изменила сценарий. Текст в поле останется в памяти.<button
+              onClick={() => {
+                const result = load(localStorage);
+                setState(result.state);
+                setError(result.error);
+                setBlocked(Boolean(result.error));
+                setExternal(false);
+              }}>Загрузить обновления</button></div>}
+          {message && <div className="notice" role="status">
+            {message}
+          </div>}
+          {persona.active === false
+            ? <section className="card">
+              <h1>Тестовый пользователь отключён</h1>
+              <p>Выберите другого персонажа. Общий сценарий сохранён.</p>
+              <button onClick={() => choose(seed.personas.find(p => p.active)?.id ?? 'operator_demo')}>Выбрать доступного персонажа</button>
+            </section>
+            : route === homes[persona.role] + '/more'
+              ? <section>
+                <h1>Разделы кабинета</h1>
+                <ContextNavigation state={state} role={persona.role} route={route} expanded />
+              </section>
+              : route === '/demo'
+                ? <section className="card">
+                  <h1>Выберите тестовую роль</h1>
+                  <p>Один общий локальный сценарий. Регистрация не требуется.</p>
+                  {seed.personas.map(p => <p key={p.id}>
+                    <button disabled={!p.active} onClick={() => choose(p.id)}>{roleNames[p.role]} · {p.name}</button>
+                  </p>)}
+                </section>
+                : route === '/about'
+                  ? <section className="card about-platform">
+                    <span className="eyebrow">О проекте</span>
+                    <h1>О платформе</h1>
+                    <p>«Строительная карьера» связывает студентов МГСУ, строительные компании и координатора вуза: от поиска первой практики и отклика до документов, заданий и учебного результата.</p>
+                    <p>Это учебная демонстрационная версия с вымышленными людьми, компаниями и образовательными данными. Все роли работают с одним локальным сценарием в этом браузере.</p>
+                    <p>Открытие этой страницы сохраняет выбранный профиль и результаты действий.</p>
+                    <nav className="platform-directory" aria-label="Каталоги платформы">
+                      <a href="#/practices">Практики</a>
+                      <a href="#/jobs">Работа и стажировки</a>
+                      <a href="#/companies">Компании</a>
+                      <a href="#/universities">Вузы</a>
+                      <a href="#/professions">Профессии и навыки</a>
+                      <a href="#/statistics">Статистика</a>
+                      <a href="#/for-employers">Работодателям</a>
+                      <a href="#/for-universities">Вузам</a>
+                    </nav>
+                    <div className="actions">
+                      <a className="button primary" href={'#' + homes[persona.role]}>Вернуться в кабинет</a>
+                      <a href="#/how-it-works">Как это работает →</a>
+                      <a href="#/demo/about">Учебная дата и ограничения →</a>
+                    </div>
+                  </section>
+                  : route === '/demo/about'
+                    ? <section className="card">
+                      <span className="eyebrow">О демонстрации</span>
+                      <h1>Учебная дата и ограничения</h1>
+                      <p>Учебная дата сценария: <strong>
+                        {state.demoClock}
+                      </strong>. Это дата демонстрационного набора.</p>
+                      <p>Вымышленные люди, компании и образовательные сведения. МГСУ — учебный контекст, официальное партнёрство и обмен данными отсутствуют.</p>
+                      <p>Поиск, карточки, образовательные исправления, проекты, резюме и отправка откликов работают локально. ИИ-помощник обращается к GigaChat через сервер, если подключён; режим отмечен в диалоге. История диалога не сохраняется в браузерное хранилище. Кадровые решения, практика, документы и переписка работают локально.</p>
+                      <p>Данные сохраняются только в этом браузере. При недоступном хранилище изменения остаются в памяти до закрытия страницы.</p>
+                      <section className="demo-reset-section">
+                        <h2>Демоданные на этом устройстве</h2>
+                        <p>Сброс восстановит исходный учебный набор для всех тестовых ролей в этом браузере.</p>
+                        <button onClick={() => setResetOpen(true)}>Сбросить демоданные</button>
+                      </section>
+                      <a href={'#' + homes[persona.role]}>Вернуться в кабинет →</a>
+                    </section>
+                    : route === homes[persona.role]
+                      ? <RoleHome state={state} />
+                      : handlesC(route)
+                        ? <CView
+                          key={route.split('?')[0] + persona.id}
+                          state={state}
+                          route={route}
+                          commit={commit}
+                          choose={choose}
+
+
+
+                        />
+                        : handlesB2(route)
+                          ? <B2View
+                            key={route.split('?')[0] + persona.id}
+                            state={state}
+                            route={route}
+                            commit={commit}
+                            choose={choose}
+
+
+
+                          />
+                          : handlesB1(route)
+                            ? <B1View
+                              key={route.split('?')[0] + persona.id}
+                              state={state}
+                              route={route}
+                              commit={commit}
+                              choose={choose}
+
+
+
+                            />
+                            : <section className="card placeholder">
+                              <h1>Страница недоступна</h1>
+                              <p>Возможно, ссылка устарела или этот раздел недоступен текущей роли.</p>
+                              <a className="button" href={'#' + homes[persona.role]}>Вернуться в кабинет</a>
+                            </section>}
+          <footer className="workspace-footer">
+            <span>Строительная карьера</span>
+            <nav aria-label="Информация и помощь">
+              <a href={'#' + homes[persona.role] + '/more'}>Разделы кабинета</a>
+              <a href="#/about">О платформе</a>
+              <a href="#/help">Помощь</a>
+              <a href="#/demo/about">Учебная дата и ограничения →</a>
+            </nav>
+          </footer>
+        </main>
+      </div>
+      {resetOpen
+        && <div className="overlay">
+          <section
+            ref={dialogRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="reset-title"
+            className="card dialog"
+
+
+
+          >
+            <h2 id="reset-title">Сбросить демоданные?</h2>
+            <p>Все результаты действий, отклики, сообщения, документы и изменения профилей всех тестовых ролей в этом браузере будут удалены. Восстановится исходный учебный набор, и откроется приветственная страница. Данные других сайтов не затрагиваются. Это действие нельзя отменить.</p>
+            <div className="actions">
+              <button autoFocus onClick={() => setResetOpen(false)}>Отмена</button>
+              <button className="primary" onClick={restore}>Восстановить исходный набор</button>
+            </div>
+          </section>
+        </div>}
+    </div>
+  </>;
 }
-createRoot(document.getElementById('root')!).render(<AIAvailabilityProvider><App/></AIAvailabilityProvider>);
-
-
-
-
-
-
-
-
-
-
+createRoot(document.getElementById('root')!).render(<AIAvailabilityProvider>
+  <App />
+</AIAvailabilityProvider>);

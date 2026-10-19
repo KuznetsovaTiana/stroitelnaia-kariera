@@ -1,21 +1,103 @@
 /* global window */
-import { chromium,expect } from '@playwright/test';
+import { chromium, expect } from '@playwright/test';
 import { mkdir } from 'node:fs/promises';
-const browser=await chromium.launch({channel:'msedge',headless:true});
-const context=await browser.newContext();const page=await context.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
-const base=process.env.DEMO_BASE_URL??'http://127.0.0.1:4185/';
-const go=async r=>{await page.goto(base+'#'+r);await page.locator('main h1').first().waitFor()};
-const role=async id=>{await page.getByLabel('Тестовая роль').selectOption(id);await page.waitForTimeout(100)};
-try{
-await go('/practices/offer_pto_demo');await page.getByRole('button',{name:'В избранное',exact:true}).click();await role('persona_vera');
-await go('/practices/offer_pto_demo');await expect(page.getByRole('button',{name:'В избранное',exact:true})).toBeVisible();await page.getByRole('button',{name:'В избранное',exact:true}).click();await page.reload();await page.getByRole('button',{name:'Убрать из избранного',exact:true}).click();await role('persona_anna');await go('/student/saved');await expect(page.locator('main')).toContainText('Практика в отделе ПТО');await page.reload();await expect(page.locator('main')).toContainText('Практика в отделе ПТО');
-await role('employer_sever_demo');await go('/employer/practices/new/edit');await page.getByLabel('Название предложения').fill('Прямая отправка нового объявления');await page.getByLabel('Назначенный наставник').fill('Учебный наставник');await page.getByLabel('Ожидаемые учебные задачи').fill('Подготовка ведомости объёмов');await page.getByRole('button',{name:'Направить на модерацию',exact:true}).click();await expect(page.locator('main')).toContainText('На модерации');await page.reload();await expect(page.getByLabel('Название предложения')).toHaveValue('Прямая отправка нового объявления');
-await mkdir('../docs/previews',{recursive:true});
-const roles=[['student','persona_anna','/student'],['employer','employer_sever_demo','/employer'],['coordinator','coordinator_mgsu_demo','/university'],['operator','operator_demo','/operator']];
-for(const width of [320,360,390,430,768,1366]){await page.setViewportSize({width,height:width===1366?900:844});for(const [name,id,route] of roles){await role(id);await go(route);expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);await expect(page.locator('main')).not.toContainText('Каталоги и модули');if(width===390||width===1366)await page.screenshot({path:`../docs/previews/ux-${name}-${width}.png`,fullPage:true});}await go('/operator/more');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);}
-await page.setViewportSize({width:390,height:844});await role('employer_sever_demo');await go('/employer/more');await page.screenshot({path:'../docs/previews/ux-employer-more-390.png',fullPage:true});await page.setViewportSize({width:844,height:390});await go('/employer');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
-await page.setViewportSize({width:683,height:450});await go('/employer');expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
-await page.setViewportSize({width:390,height:844});await role('coordinator_mgsu_demo');for(const [name,route] of [['returned-document','/university/practices/practice_2?tab=documents'],['completed-practice','/university/practices/practice_4']]){await go(route);await page.screenshot({path:`../docs/previews/ux-${name}-390.png`,fullPage:true});}await role('persona_anna');for(const [name,route] of [['public','/'],['filters','/practices'],['unavailable','/unknown-page']]){await go(route);await page.screenshot({path:`../docs/previews/ux-${name}-390.png`,fullPage:true});}await page.setViewportSize({width:1366,height:900});await go('/');await page.screenshot({path:'../docs/previews/ux-public-1366.png',fullPage:true});await role('employer_sever_demo');await go('/employer/applications');await page.screenshot({path:'../docs/previews/ux-employer-applications-1366.png',fullPage:true});await page.locator('.demo-tools').evaluate(el=>el.open=true);await page.screenshot({path:'../docs/previews/ux-demo-panel-1366.png',fullPage:true});
-expect(errors).toEqual([]);console.log('PASS audit: B01 independent/reload; B02 immediate moderation; 4 roles x 6 widths; landscape; 17 screenshots; no JS errors. Native browser zoom and real devices are not tested.');
-}finally{await browser.close()}
-
+const browser = await chromium.launch({ channel: 'msedge', headless: true });
+const context = await browser.newContext();
+const page = await context.newPage();
+const errors = [];
+page.on('pageerror', e => errors.push(e.message));
+const base = process.env.DEMO_BASE_URL ?? 'http://127.0.0.1:4185/';
+const go = async r => {
+  await page.goto(base + '#' + r);
+  await page.locator('main h1').first().waitFor();
+};
+const role = async id => {
+  await page.getByLabel('Тестовая роль').selectOption(id);
+  await page.waitForTimeout(100);
+};
+try {
+  await go('/practices/offer_pto_demo');
+  await page.getByRole('button', { name: 'В избранное', exact: true }).click();
+  await role('persona_vera');
+  await go('/practices/offer_pto_demo');
+  await expect(page.getByRole('button', { name: 'В избранное', exact: true })).toBeVisible();
+  await page.getByRole('button', { name: 'В избранное', exact: true }).click();
+  await page.reload();
+  await page.getByRole('button', { name: 'Убрать из избранного', exact: true }).click();
+  await role('persona_anna');
+  await go('/student/saved');
+  await expect(page.locator('main')).toContainText('Практика в отделе ПТО');
+  await page.reload();
+  await expect(page.locator('main')).toContainText('Практика в отделе ПТО');
+  await role('employer_sever_demo');
+  await go('/employer/practices/new/edit');
+  await page.getByLabel('Название предложения').fill('Прямая отправка нового объявления');
+  await page.getByLabel('Назначенный наставник').fill('Учебный наставник');
+  await page.getByLabel('Ожидаемые учебные задачи').fill('Подготовка ведомости объёмов');
+  await page.getByRole('button', { name: 'Направить на модерацию', exact: true }).click();
+  await expect(page.locator('main')).toContainText('На модерации');
+  await page.reload();
+  await expect(page.getByLabel('Название предложения')).toHaveValue('Прямая отправка нового объявления');
+  await mkdir('../docs/previews', { recursive: true });
+  const roles = [
+    ['student', 'persona_anna', '/student'],
+    ['employer', 'employer_sever_demo', '/employer'],
+    ['coordinator', 'coordinator_mgsu_demo', '/university'],
+    ['operator', 'operator_demo', '/operator']
+  ];
+  for (const width of [
+    320,
+    360,
+    390,
+    430,
+    768,
+    1366
+  ]) {
+    await page.setViewportSize({ width, height: width === 1366 ? 900 : 844 });
+    for (const [name, id, route] of roles) {
+      await role(id);
+      await go(route);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+      await expect(page.locator('main')).not.toContainText('Каталоги и модули');
+      if (width === 390 || width === 1366) await page.screenshot({ path: `../docs/previews/ux-${name}-${width}.png`, fullPage: true });
+    }
+    await go('/operator/more');
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  }
+  await page.setViewportSize({ width: 390, height: 844 });
+  await role('employer_sever_demo');
+  await go('/employer/more');
+  await page.screenshot({ path: '../docs/previews/ux-employer-more-390.png', fullPage: true });
+  await page.setViewportSize({ width: 844, height: 390 });
+  await go('/employer');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.setViewportSize({ width: 683, height: 450 });
+  await go('/employer');
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
+  await page.setViewportSize({ width: 390, height: 844 });
+  await role('coordinator_mgsu_demo');
+  for (const [name, route] of [
+    ['returned-document', '/university/practices/practice_2?tab=documents'],
+    ['completed-practice', '/university/practices/practice_4']
+  ]) {
+    await go(route);
+    await page.screenshot({ path: `../docs/previews/ux-${name}-390.png`, fullPage: true });
+  }
+  await role('persona_anna');
+  for (const [name, route] of [['public', '/'], ['filters', '/practices'], ['unavailable', '/unknown-page']]) {
+    await go(route);
+    await page.screenshot({ path: `../docs/previews/ux-${name}-390.png`, fullPage: true });
+  }
+  await page.setViewportSize({ width: 1366, height: 900 });
+  await go('/');
+  await page.screenshot({ path: '../docs/previews/ux-public-1366.png', fullPage: true });
+  await role('employer_sever_demo');
+  await go('/employer/applications');
+  await page.screenshot({ path: '../docs/previews/ux-employer-applications-1366.png', fullPage: true });
+  await page.locator('.demo-tools').evaluate(el => el.open = true);
+  await page.screenshot({ path: '../docs/previews/ux-demo-panel-1366.png', fullPage: true });
+  expect(errors).toEqual([]);
+  console.log('PASS audit: B01 independent/reload; B02 immediate moderation; 4 roles x 6 widths; landscape; 17 screenshots; no JS errors. Native browser zoom and real devices are not tested.');
+} finally {
+  await browser.close();
+}

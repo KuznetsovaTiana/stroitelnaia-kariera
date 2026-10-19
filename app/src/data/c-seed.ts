@@ -1,8 +1,135 @@
-﻿import type { Dictionary,Requirement,Template,PlaceRequest,AiExample } from '../domain/c-types';
-const at='2026-10-14T09:00:00.000Z',base=(id:string)=>({id,version:1,createdAt:at,updatedAt:at});
-export const dictionarySeed:Dictionary[]=[...['ПТО','Проектирование','BIM/ТИМ','Сметное дело'].map((name,i)=>({...base('direction_'+i),name,category:'direction' as const,active:true,skillIds:[],tasks:'Учебные задачи строительной траектории',programId:name})),...['Таблицы','График работ','Моделирование','Проверка коллизий','Чтение чертежей','Планы','Объёмы работ','Сметы','Документация','Календарный план','Конструкции','Материалы','Геодезия','Безопасность','Расчёт','Пояснительная записка'].map((name,i)=>({...base('skill_'+i),name,category:'skill' as const,active:true,skillIds:[],tasks:'Учебный пример навыка, не профессиональная аттестация',programId:''})),...['Инженер ПТО','Проектировщик','BIM-координатор','Сметчик','Инженер стройконтроля','Планировщик','Инженер-конструктор','Специалист по документации'].map((name,i)=>({...base('profession_'+i),name,category:'profession' as const,active:true,skillIds:i%4===2?['skill_2','skill_3']:['skill_0','skill_1'],tasks:['Подготовка исполнительной документации','Проектирование учебной схемы','Проверка учебной модели','Подготовка учебной сметы'][i%4],programId:['ПТО','Проектирование','BIM/ТИМ','Сметное дело'][i%4]}))];
-export const requirementSeed:Requirement[]=['ПТО','BIM/ТИМ','Проектирование','Сметное дело'].flatMap(programId=>['Производственная','Учебная'].map(practiceType=>({...base('requirement_'+programId+'_'+practiceType),programId,practiceType,minHours:144,requiredDocuments:['agreement','direction','assignment'],completionRule:'Принятые задания, отчёт, отзыв работодателя и решение координатора'})));
-export const templateSeed:Template[]=['agreement','direction','assignment','report'].map(type=>({...base('template_'+type),type:type as Template['type'],body:'Демонстрационный учебный образец. Студент: {{student}}. Компания: {{company}}. Период: {{period}}. Задачи: {{tasks}}.',fields:['student','university','company','practiceType','period','hours','tasks','companySupervisor','universitySupervisor','notes',...(type==='report'?['report']:[])]}));
-export const requestSeed:PlaceRequest[]=[{...base('request_pto_demo'),companyId:'company_sever_demo',programId:'ПТО',start:'2026-11-02',end:'2026-11-27',requested:3,proposed:0,status:'pending',message:'Учебный запрос мест ПТО',response:''},{...base('request_bim_demo'),companyId:'company_2_demo',programId:'BIM/ТИМ',start:'2026-11-02',end:'2026-11-27',requested:2,proposed:2,status:'answered',message:'Учебный запрос',response:'Учебный ответ: предложено два места'}];
-export const aiSeed:AiExample[]=[{...base('ai_example_demo'),resumeId:'resume_0',branch:'ПТО',text:'Личный вклад: подготовила учебный график работ.',facts:['Подготовила учебный график работ'],verdict:'pending',comment:''}];
-export const mergeById=<T extends {id:string}>(base:T[],changed:T[])=>[...base.map(x=>changed.find(c=>c.id===x.id)??x),...changed.filter(c=>!base.some(x=>x.id===c.id))];
+
+import type { Dictionary, Requirement, Template, PlaceRequest, AiExample } from '../domain/c-types';
+const at = '2026-10-14T09:00:00.000Z';
+const base = (id: string) => ({
+  id,
+  version: 1,
+  createdAt: at,
+  updatedAt: at
+});
+export const dictionarySeed: Dictionary[] = [
+  ...['ПТО', 'Проектирование', 'BIM/ТИМ', 'Сметное дело'].map((name, i) => ({
+    ...base('direction_' + i),
+    name,
+    category: 'direction' as const,
+    active: true,
+    skillIds: [],
+    tasks: 'Учебные задачи строительной траектории',
+    programId: name
+  })),
+  ...[
+    'Таблицы',
+    'График работ',
+    'Моделирование',
+    'Проверка коллизий',
+    'Чтение чертежей',
+    'Планы',
+    'Объёмы работ',
+    'Сметы',
+    'Документация',
+    'Календарный план',
+    'Конструкции',
+    'Материалы',
+    'Геодезия',
+    'Безопасность',
+    'Расчёт',
+    'Пояснительная записка'
+  ].map((name, i) => ({
+    ...base('skill_' + i),
+    name,
+    category: 'skill' as const,
+    active: true,
+    skillIds: [],
+    tasks: 'Учебный пример навыка, не профессиональная аттестация',
+    programId: ''
+  })),
+  ...[
+    'Инженер ПТО',
+    'Проектировщик',
+    'BIM-координатор',
+    'Сметчик',
+    'Инженер стройконтроля',
+    'Планировщик',
+    'Инженер-конструктор',
+    'Специалист по документации'
+  ].map((name, i) => ({
+    ...base('profession_' + i),
+    name,
+    category: 'profession' as const,
+    active: true,
+    skillIds: i % 4 === 2 ? ['skill_2', 'skill_3'] : ['skill_0', 'skill_1'],
+    tasks: [
+      'Подготовка исполнительной документации',
+      'Проектирование учебной схемы',
+      'Проверка учебной модели',
+      'Подготовка учебной сметы'
+    ][i % 4],
+    programId: ['ПТО', 'Проектирование', 'BIM/ТИМ', 'Сметное дело'][i % 4]
+  }))
+];
+export const requirementSeed: Requirement[] = ['ПТО', 'BIM/ТИМ', 'Проектирование', 'Сметное дело'].flatMap(programId => ['Производственная', 'Учебная'].map(practiceType => ({
+  ...base('requirement_' + programId + '_' + practiceType),
+  programId,
+  practiceType,
+  minHours: 144,
+  requiredDocuments: ['agreement', 'direction', 'assignment'],
+  completionRule: 'Принятые задания, отчёт, отзыв работодателя и решение координатора'
+})));
+export const templateSeed: Template[] = ['agreement', 'direction', 'assignment', 'report'].map(type => ({
+  ...base('template_' + type),
+  type: type as Template['type'],
+  body: 'Демонстрационный учебный образец. Студент: {{student}}. Компания: {{company}}. Период: {{period}}. Задачи: {{tasks}}.',
+  fields: [
+    'student',
+    'university',
+    'company',
+    'practiceType',
+    'period',
+    'hours',
+    'tasks',
+    'companySupervisor',
+    'universitySupervisor',
+    'notes',
+    ...(type === 'report' ? ['report'] : [])
+  ]
+}));
+export const requestSeed: PlaceRequest[] = [
+  {
+    ...base('request_pto_demo'),
+    companyId: 'company_sever_demo',
+    programId: 'ПТО',
+    start: '2026-11-02',
+    end: '2026-11-27',
+    requested: 3,
+    proposed: 0,
+    status: 'pending',
+    message: 'Учебный запрос мест ПТО',
+    response: ''
+  },
+  {
+    ...base('request_bim_demo'),
+    companyId: 'company_2_demo',
+    programId: 'BIM/ТИМ',
+    start: '2026-11-02',
+    end: '2026-11-27',
+    requested: 2,
+    proposed: 2,
+    status: 'answered',
+    message: 'Учебный запрос',
+    response: 'Учебный ответ: предложено два места'
+  }
+];
+export const aiSeed: AiExample[] = [
+  {
+    ...base('ai_example_demo'),
+    resumeId: 'resume_0',
+    branch: 'ПТО',
+    text: 'Личный вклад: подготовила учебный график работ.',
+    facts: ['Подготовила учебный график работ'],
+    verdict: 'pending',
+    comment: ''
+  }
+];
+export const mergeById = <T extends {
+  id: string;
+}>(base: T[], changed: T[]) => [...base.map(x => changed.find(c => c.id === x.id) ?? x), ...changed.filter(c => !base.some(x => x.id === c.id))];
